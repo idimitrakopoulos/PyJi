@@ -1,0 +1,4 @@
+[pyji]
+version = 0.1
+revision = 0
+buildDate = 0

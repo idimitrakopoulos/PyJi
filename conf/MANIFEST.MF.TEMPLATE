@@ -1,0 +1,4 @@
+[pyji]
+version = @version@
+revision = @buildNumber@
+buildDate = @buildDate@

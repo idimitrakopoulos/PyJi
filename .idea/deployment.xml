@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="paragonium">
+  <component name="PublishConfigData" autoUpload="Always" serverName="paragonium" createEmptyFolders="true" uploadOnCheckin="fcc23cac-42c2-472b-ac7f-66389226a6f0">
     <serverData>
       <paths name="paragonium">
         <serverdata>
@@ -10,6 +10,7 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="paragonium" />
     <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>

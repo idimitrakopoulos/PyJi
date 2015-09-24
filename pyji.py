@@ -1,22 +1,20 @@
 #! /usr/bin/env python
 import sys
-import logging, logging.config
-from util.Toolkit import scriptGlobals, generateGUID
-from util.ColorFormatter import ColorFormatter
-from jira import JIRA
+
+import util.OptParser as parser
+from util.Toolkit import log, generateGUID, abPathToClass, abSubclassPathFromAction
 
 try:
 
-    # Initialize loggers
-    logging.ColorFormatter = ColorFormatter
-    logging.config.fileConfig(scriptGlobals.logProperties)
-    log = logging.getLogger(scriptGlobals.defaultLogger)
+    # Print execution command
+    log.debug("Executed command '" + " ".join(sys.argv) + "'")
 
     # Generate a unique execution id
     guid = generateGUID()
-    log.info("Unique PyJi Execution ID generated: '" + guid + "'")
+    log.info("Unique PyJi execution ID generated: '" + guid + "'")
 
-
+    # Instantiate specified ActionBundle class (from string)
+    ab = abPathToClass(abSubclassPathFromAction(parser.action), parser)
 
 except (Exception, KeyboardInterrupt):
     log.error(str(sys.exc_info()[0]) + " " + str(sys.exc_info()[1]))
