@@ -46,12 +46,17 @@ if (action):
     # The pinnacle of all options :-) (determines what other options will be added to the parser)
     parser.add_option("-a", "--action",         dest="action",         help="Choose one of the following actions '" +", ".join(validActions) + "' (mandatory)",      metavar="<ACTION>")
 
+
     # Common Options
     commonOptionsGroup = OptionGroup(parser, "Common Options", "(Common throughout all actions supported by PyJi)")
     commonOptionsGroup.add_option("-C", "--compatibility", action="store_true", dest="compatibility", default=False,
                                   help="Compatibility mode (ignore existing Python version)")
     commonOptionsGroup.add_option("-S", "--silent", action="store_true", dest="silent", default=False,
                                   help="Silent mode (don't send any email notifications)")
+
+    commonOptionsGroup.add_option("-i", "--identifier", dest="identifier", help="A unique identifier",
+                                  metavar="<ACTION>")
+
     parser.add_option_group(commonOptionsGroup)
 
     # Logging Options
