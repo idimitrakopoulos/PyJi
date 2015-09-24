@@ -129,6 +129,7 @@ def abPathToClass(abPath, p):
 def abSubclassPathFromAction(s):
     switcher = {
         'add-comment': "actionbundles.abAddComment",
+        'change-status': "actionbundles.abChangeStatus",
     }
     abPath = switcher.get(s, "n/a")
     log.debug("Action '" + s + "' maps to AB class '" + abPath + "'")
