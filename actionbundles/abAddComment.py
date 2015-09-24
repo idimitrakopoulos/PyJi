@@ -4,7 +4,7 @@ from actionbundles.ActionBundle import ActionBundle
 
 class abAddComment(ActionBundle):
     '''
-    classdocs
+    classdocs.
     '''
 
     def __init__(self, parser):
