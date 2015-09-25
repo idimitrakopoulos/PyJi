@@ -1,4 +1,4 @@
-from util.Toolkit import log, jiraAuth, scriptGlobals
+from util.Toolkit import log, jiraAuth, scriptGlobals, findStringInList
 from actionbundles.ActionBundle import ActionBundle
 
 
@@ -25,20 +25,19 @@ class abChangeStatus(ActionBundle):
             issue = jira.issue(k)
 
             # Get its valid transitions
-            transitions = jira.transitions(issue, None, True)
-            for t in transitions:
-                print [(t['id'], t['name'])]
+            transitions = jira.transitions(issue)
 
-                print 'Deploy Issue' in transitions[1]
+            for t in transitions:
+                print t['name']
 
             log.info("Issue Key       : " + k)
             log.info("Current Status  : " + str(issue.fields.status))
 
-            if str(issue.fields.status) in ('Resolved') and u'Deploy' in transitions:
+            if str(issue.fields.status) in ('Resolved') and findStringInList(transitions, 'name', 'Deploy'):
                 jira.transition_issue(issue, u'Deploy')
                 log.info("New Status      : " + 'Ready To Test')
 
-            elif str(issue.fields.status) in ('Resolved') and u'Deploy Issue' in transitions:
+            elif str(issue.fields.status) in ('Resolved') and findStringInList(transitions, 'name', 'Deploy Issue'):
                 jira.transition_issue(issue, u'Deploy Issue')
                 log.info("New Status      : " + 'Ready To Test')
 
@@ -47,7 +46,10 @@ class abChangeStatus(ActionBundle):
                 log.info("New Status      : " + 'Deploy on UAT')
 
             else:
-                log.info("No transition identified")
+                log.debug("Ticket can only do the following transitions:")
+                for t in transitions:
+                    log(t['name'])
+                log.warn("Exiting without transition")
 
         except:
             raise

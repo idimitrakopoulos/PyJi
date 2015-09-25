@@ -146,6 +146,22 @@ def jiraAuth(url, u, p):
             "Error when trying to authenticate to '" + url + "' (username: '" + u + "'" + "' password: '" + p + "')")
         raise
     return j
+
+
+def findStringInList(lst, n, s):
+    r = False
+    for i in lst:
+        # log.debug("Comparing '", str(i[n]), "' with '", s, "'")
+        if i[n] == s:
+            r = True
+            break
+    return r
+
+
+
+
+
+
 class ScriptGlobals(object):
     '''
     classdocs
@@ -166,6 +182,8 @@ class ScriptGlobals(object):
         # [variousProperties]
         self.defaultLogger = readPropertyFromPropertiesFile("defaultLogger", "variousProperties", self.globalProperties)
         self.manifestFile = readPropertyFromPropertiesFile("manifestFile", "variousProperties", self.globalProperties)
+        self.manifestTemplateFile = readPropertyFromPropertiesFile("manifestTemplateFile", "variousProperties",
+                                                                   self.globalProperties)
         self.scriptVarSectionName = readPropertyFromPropertiesFile("scriptVarSectionName", "variousProperties",
                                                                    self.globalProperties)
 
