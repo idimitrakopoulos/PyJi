@@ -12,6 +12,7 @@ from ConfigParser import RawConfigParser
 
 from jira import JIRA
 
+from util.FunStuff import SpinCursor
 from util.ColorFormatter import ColorFormatter
 
 
@@ -158,8 +159,14 @@ def findStringInList(lst, n, s):
     return r
 
 
+def beginBusyIndicatorThread(msg):
+    spin = SpinCursor(msg)
+    spin.start()
+    return spin
 
 
+def endBusyIndicatorThread(busyIndicator):
+    busyIndicator.stop()
 
 
 class ScriptGlobals(object):
@@ -190,10 +197,10 @@ class ScriptGlobals(object):
         # [loggingProperties]
         self.customLoggingFormat = readPropertyFromPropertiesFile("customLoggingFormat", "loggingProperties", self.globalProperties)
 
-        # [jiraProperties]
-        self.jiraURL = readPropertyFromPropertiesFile("jiraURL", "jiraProperties", self.jiraProperties)
-        self.jiraUsername = readPropertyFromPropertiesFile("jiraUsername", "jiraProperties", self.jiraProperties)
-        self.jiraPassword = readPropertyFromPropertiesFile("jiraPassword", "jiraProperties", self.jiraProperties)
+        # # [jiraProperties]
+        # self.jiraURL = readPropertyFromPropertiesFile("jiraURL", "jiraProperties", self.jiraProperties)
+        # self.jiraUsername = readPropertyFromPropertiesFile("jiraUsername", "jiraProperties", self.jiraProperties)
+        # self.jiraPassword = readPropertyFromPropertiesFile("jiraPassword", "jiraProperties", self.jiraProperties)
 
         # MANIFEST.MF
         if checkFileExists(self.manifestFile) == 1:

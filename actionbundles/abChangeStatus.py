@@ -48,7 +48,7 @@ class abChangeStatus(ActionBundle):
             else:
                 log.debug("Ticket can only do the following transitions:")
                 for t in transitions:
-                    log(t['name'])
+                    log.debug(t['name'])
                 log.warn("Exiting without transition")
 
         except:

@@ -1,4 +1,4 @@
-from util.Toolkit import log, jiraAuth, scriptGlobals
+from util.Toolkit import log, jiraAuth
 from actionbundles.ActionBundle import ActionBundle
 
 
@@ -20,7 +20,7 @@ class abAddComment(ActionBundle):
             k = parser.options.key
             c = parser.options.comment
 
-            jira = jiraAuth(scriptGlobals.jiraURL, scriptGlobals.jiraUsername, scriptGlobals.jiraPassword)
+            jira = jiraAuth(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
 
             # Get an issue.
             issue = jira.issue(k)
