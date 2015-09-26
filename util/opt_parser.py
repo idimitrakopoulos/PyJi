@@ -2,21 +2,22 @@ from optparse import OptionParser, OptionGroup
 import sys
 import getpass
 
-from util.Toolkit import checkFileExists, scriptGlobals, log, logging
+from util.toolkit import check_file_exists, properties, log, logging
 
-validActions = ['add-comment', 'change-status']
+valid_actions = ['add-comment', 'change-status', 'auto-transition']
 action = None
-mandatoryOptions = ['action', 'jiraURL', 'jiraUsername', 'jiraPassword']
-fileOptions = []
+mandatory_options = ['action', 'jiraURL', 'jiraUsername', 'jiraPassword']
+file_options = []
 
-def actionUsage():
+
+def action_usage():
     print '''Usage: pyji.py [options]
 
 Options:
   -h, --help            Using this switch combined with an action will give you the options required for it
   -a <ACTION>, --action=<ACTION>
                         Choose one of the following actions '%s' (mandatory)
-''' % (", ".join(validActions))
+''' % (", ".join(valid_actions))
 
 
 # Pseudoparser (overcomes limitation of default python OptParser module)
@@ -25,27 +26,30 @@ for i in range(len(sys.argv)):
         action = sys.argv[i+1]
 
 if action == None:
-    actionUsage()
+    action_usage()
     sys.exit()
 
 # Make sure actions are recognised
 found = 0
-for va in validActions:
+for va in valid_actions:
     if (action == va) or ((action) and (action).startswith("_")): # this way we allow any custom _XXXX actions
         found=1
         break
 if found != 1:
     if (action): log.critical("Unrecognized action '" + action + "'\n")
-    actionUsage()
+    action_usage()
     sys.exit()
 
 # Init Optparser
-parser = OptionParser(version="%prog \n\n version: '"+ scriptGlobals.version + "'\n revision: '"+ scriptGlobals.revision + "'\n build date: '" + scriptGlobals.buildDate + "'")
+parser = OptionParser(
+    version="%prog \n\n version: '" + properties.version + "'\n revision: '" + properties.revision + "'\n build date: '" + properties.build_date + "'")
 
 # Add common options
 if (action):
     # The pinnacle of all options :-) (determines what other options will be added to the parser)
-    parser.add_option("-a", "--action",         dest="action",         help="Choose one of the following actions '" +", ".join(validActions) + "' (mandatory)",      metavar="<ACTION>")
+    parser.add_option("-a", "--action", dest="action",
+                      help="Choose one of the following actions '" + ", ".join(valid_actions) + "' (mandatory)",
+                      metavar="<ACTION>")
 
     # Jira Options
     jiraOptionsGroup = OptionGroup(parser, "JIRA Options", "(JIRA location and credentials)")
@@ -85,15 +89,15 @@ if (action):
     parser.add_option_group(loggingOptionsGroup)
 
 # Add options per action specified
-if (action in validActions or (action).startswith("_")):
+if (action in valid_actions or (action).startswith("_")):
     log.info("Action that was requested to execute '" + action + "'")
 
     if (action in 'add-comment'):
         parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
         parser.add_option("-c", "--comment", dest="comment", help="The comment you want to add (mandatory)",
                           metavar="<COMMENT>")
-        mandatoryOptions.append('key')
-        mandatoryOptions.append('comment')
+        mandatory_options.append('key')
+        mandatory_options.append('comment')
 
 
     elif (action in 'change-status'):
@@ -101,8 +105,15 @@ if (action in validActions or (action).startswith("_")):
         parser.add_option("-s", "--status", dest="status", help="The jira ticket status (mandatory)",
                           metavar="<STATUS>")
 
-        mandatoryOptions.append('key')
-        mandatoryOptions.append('status')
+        mandatory_options.append('key')
+        mandatory_options.append('status')
+
+    elif (action in 'auto-transition'):
+        parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
+
+        mandatory_options.append('key')
+
+
 else:
     log.critical("Action '" + action + "' is allowed but there is no implementation for it at this point :-(")
     sys.exit()
@@ -116,16 +127,16 @@ if options.promptForJiraPassword:
     options.jiraPassword = getpass.getpass("> ")
 
 # Make sure all mandatory options are provided
-for m in mandatoryOptions:
+for m in mandatory_options:
     if not options.__dict__[m]:
         log.critical("Mandatory option '" + m + "' is missing\n")
         parser.print_help()
         sys.exit()
 
 
-# Make sure all mandatory fileOptions exist
-for f in fileOptions:
-    if checkFileExists(options.__dict__[f]):
+# Make sure all mandatory file_options exist
+for f in file_options:
+    if check_file_exists(options.__dict__[f]):
         log.critical("The following file is missing '" + options.__dict__[f] +"'\n")
         parser.print_help()
         sys.exit()

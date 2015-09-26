@@ -1,32 +1,30 @@
 #! /usr/bin/env python
 import sys
 
-import util.OptParser as parser
-from util.Toolkit import log, generateGUID, abPathToClass, abSubclassPathFromAction, beginBusyIndicatorThread, \
-    endBusyIndicatorThread
+import util.opt_parser as parser
+from util.toolkit import log, generate_guid, ab_path_to_class, ab_subclass_path_from_action, start_busy_indicator, \
+    stop_busy_indicator
 
 # Begin the Busy indicator
-bi = beginBusyIndicatorThread("")
+bi = start_busy_indicator("")
 
 try:
     # Print execution command
     log.debug("Executed command '" + " ".join(sys.argv) + "'")
 
     # Generate a unique execution id
-    guid = generateGUID()
+    guid = generate_guid()
     log.info("Unique PyJi execution ID generated: '" + guid + "'")
 
-
-
     # Instantiate specified ActionBundle class (from string)
-    ab = abPathToClass(abSubclassPathFromAction(parser.action), parser)
+    ab = ab_path_to_class(ab_subclass_path_from_action(parser.action), parser)
 
 except (Exception, KeyboardInterrupt):
     log.error(str(sys.exc_info()[0]) + " " + str(sys.exc_info()[1]))
     raise
 
 # End the busy indicator
-endBusyIndicatorThread(bi)
+stop_busy_indicator(bi)
 
 # Salute!
 log.info("Bye bye! :-)")

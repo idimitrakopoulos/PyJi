@@ -1,8 +1,8 @@
-from util.Toolkit import log, jiraAuth
-from actionbundles.ActionBundle import ActionBundle
+from util.toolkit import log, jira_authenticate
+from actionbundles.action_bundle import ActionBundle
 
 
-class abAddComment(ActionBundle):
+class ABAddComment(ActionBundle):
     '''
     classdocs.
     '''
@@ -20,7 +20,7 @@ class abAddComment(ActionBundle):
             k = parser.options.key
             c = parser.options.comment
 
-            jira = jiraAuth(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
+            jira = jira_authenticate(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
 
             # Get an issue.
             issue = jira.issue(k)

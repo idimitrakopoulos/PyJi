@@ -12,36 +12,41 @@ from ConfigParser import RawConfigParser
 
 from jira import JIRA
 
-from util.FunStuff import SpinCursor
-from util.ColorFormatter import ColorFormatter
+from util.fun_stuff import SpinCursor
+from util.color_formatter import ColorFormatter
 
 
 def die(msg="Error"):
     log.warn(msg)
     sys.exit()
 
-def raiseNotImplementedException():
+
+def raise_NotImplementedException():
     raise NotImplementedError, "Oops! This part of the functionality has not been implemented ... Bye bye!"
 
-def killProcess(pid):
+
+def kill_process(pid):
     log.warn("kill -9 " + pid)
     os.kill(int(pid), signal.SIGKILL)
 
-def terminateProcess(pid):
+
+def terminate_process(pid):
     log.warn("kill " + pid)
     os.kill(int(pid), signal.SIGTERM)
 
 
-def printOsInformation():
+def print_os_information():
     log.info("Script running on '" + " ".join(platform.uname()) + "' from within '" + os.getcwd() +"' by user '" + getpass.getuser() + "'" )
 
-def printsScriptInformation():
-    log.info("PyJi Script version  '" + scriptGlobals.version + "  r" + scriptGlobals.revision +"' built on '" + scriptGlobals.buildDate + "'" )
+
+def print_script_information():
+    log.info(
+        "PyJi Script version  '" + properties.version + "  r" + properties.revision + "' built on '" + properties.build_date + "'")
 
 
-def readPropertyFromPropertiesFile(propertyName, propertiesSectionName, propertiesFilename, warnIfEmpty = True):
+def read_property_from_file(propertyName, propertiesSectionName, propertiesFilename, warnIfEmpty=True):
     result = ""
-    if (os.path.isfile(propertiesFilename)):
+    if os.path.isfile(propertiesFilename):
         try:
             cfg = RawConfigParser()
             cfg.read(propertiesFilename)
@@ -56,14 +61,14 @@ def readPropertyFromPropertiesFile(propertyName, propertiesSectionName, properti
         except:
             raise
     else:
-        if (globals().has_key('log')):
+        if globals().has_key('log'):
             log.warn("Properties file '" + propertiesFilename + "' does not exist.")
         result = None
 
     return result
 
 
-def getCurrentHostname():
+def get_current_hostname():
     result = ""
     try:
         result = socket.gethostbyname(socket.gethostname())
@@ -72,7 +77,8 @@ def getCurrentHostname():
 
     return result
 
-def generateGUID( *args ):
+
+def generate_guid(*args):
     """
     Generates a universally unique ID.
     Any arguments only create more randomness.
@@ -80,7 +86,7 @@ def generateGUID( *args ):
     t = long( time.time() * 1000 )
     r = long( random.random()*100000000000000000L )
     try:
-        a = getCurrentHostname()
+        a = get_current_hostname()
     except:
         # if we can't get a network address, just imagine one
         a = random.random()*100000000000000000L
@@ -91,14 +97,14 @@ def generateGUID( *args ):
     return data
 
 
-def checkFileExists(filename):
+def check_file_exists(filename):
     if os.path.isfile(filename):
         return 0
     else:
         return 1
 
 
-def checkDirExists(path):
+def check_folder_exists(path):
     if os.path.isdir(path):
         return 0
     else:
@@ -121,23 +127,29 @@ def get_class(fully_qualified_path, module_name, class_name, *instantiation):
     return instance
 
 
-def abPathToClass(abPath, p):
-    cName = abPath.split(".")[1]
-    c = get_class(abPath, cName, cName, p)
+def ab_path_to_class(path, p):
+    # pkg.module.ClassName
+    _p_name = path.split(".")[0] + "." + path.split(".")[1]  # pkg.module
+    _m_name = path.split(".")[1]  # module
+    _c_name = path.split(".")[2]  # ClassName
+
+    # Instantiate class
+    c = get_class(_p_name, _m_name, _c_name, p)
     return c
 
 
-def abSubclassPathFromAction(s):
+def ab_subclass_path_from_action(s):
     switcher = {
-        'add-comment': "actionbundles.abAddComment",
-        'change-status': "actionbundles.abChangeStatus",
+        'add-comment': "actionbundles.ab_add_comment.ABAddComment",
+        'change-status': "actionbundles.ab_change_status.ABChangeStatus",
+        'auto-transition': "actionbundles.ab_auto_transition.ABAutoTransition",
     }
     abPath = switcher.get(s, "n/a")
     log.debug("Action '" + s + "' maps to AB class '" + abPath + "'")
     return abPath
 
 
-def jiraAuth(url, u, p):
+def jira_authenticate(url, u, p):
     try:
         log.info("Attempting to authenticate to '" + url + "' (username: '" + u + "'" + "' password: '" + p + "')")
         j = JIRA(url, basic_auth=(u, p))
@@ -149,7 +161,7 @@ def jiraAuth(url, u, p):
     return j
 
 
-def findStringInList(lst, n, s):
+def get_string_from_list(lst, n, s):
     r = False
     for i in lst:
         # log.debug("Comparing '", str(i[n]), "' with '", s, "'")
@@ -159,22 +171,22 @@ def findStringInList(lst, n, s):
     return r
 
 
-def beginBusyIndicatorThread(msg):
+def start_busy_indicator(msg):
     spin = SpinCursor(msg)
     spin.start()
     return spin
 
 
-def endBusyIndicatorThread(busyIndicator):
+def stop_busy_indicator(busyIndicator):
     busyIndicator.stop()
 
 
-class ScriptGlobals(object):
+class PropertyReader(object):
     '''
     classdocs
     '''
 
-    globalProperties = "conf/global.properties"
+    property_file = "conf/global.properties"
 
     def __init__(self):
         '''
@@ -183,37 +195,34 @@ class ScriptGlobals(object):
 
         # Get properties from global.properties
         # [propertyFiles]
-        self.logProperties = readPropertyFromPropertiesFile("logProperties", "propertyFiles", self.globalProperties)
-        self.jiraProperties = readPropertyFromPropertiesFile("jiraProperties", "propertyFiles", self.globalProperties)
+        self.log_properties = read_property_from_file("logProperties", "propertyFiles", self.property_file)
+        self.jira_properties = read_property_from_file("jiraProperties", "propertyFiles", self.property_file)
 
         # [variousProperties]
-        self.defaultLogger = readPropertyFromPropertiesFile("defaultLogger", "variousProperties", self.globalProperties)
-        self.manifestFile = readPropertyFromPropertiesFile("manifestFile", "variousProperties", self.globalProperties)
-        self.manifestTemplateFile = readPropertyFromPropertiesFile("manifestTemplateFile", "variousProperties",
-                                                                   self.globalProperties)
-        self.scriptVarSectionName = readPropertyFromPropertiesFile("scriptVarSectionName", "variousProperties",
-                                                                   self.globalProperties)
+        self.default_logger = read_property_from_file("defaultLogger", "variousProperties", self.property_file)
+        self.manifest_file = read_property_from_file("manifestFile", "variousProperties", self.property_file)
+        self.manifest_template_file = read_property_from_file("manifestTemplateFile", "variousProperties",
+                                                              self.property_file)
+        self.script_name = read_property_from_file("scriptName", "variousProperties",
+                                                   self.property_file)
 
         # [loggingProperties]
-        self.customLoggingFormat = readPropertyFromPropertiesFile("customLoggingFormat", "loggingProperties", self.globalProperties)
+        self.custom_logging_format = read_property_from_file("customLoggingFormat", "loggingProperties",
+                                                             self.property_file)
 
-        # # [jiraProperties]
-        # self.jiraURL = readPropertyFromPropertiesFile("jiraURL", "jiraProperties", self.jiraProperties)
-        # self.jiraUsername = readPropertyFromPropertiesFile("jiraUsername", "jiraProperties", self.jiraProperties)
-        # self.jiraPassword = readPropertyFromPropertiesFile("jiraPassword", "jiraProperties", self.jiraProperties)
 
         # MANIFEST.MF
-        if checkFileExists(self.manifestFile) == 1:
-            print "File '" + self.manifestFile + "' does not exist. Sorry, you cannot work with an unreleased version of PyJi. If you must work with it please execute 'cp " + self.manifestTemplateFile + " " + self.manifestFile + "' and retry running the script."
+        if check_file_exists(self.manifest_file) == 1:
+            print "File '" + self.manifest_file + "' does not exist. Sorry, you cannot work with an unreleased version of PyJi. If you must work with it please execute 'cp " + self.manifest_template_file + " " + self.manifest_file + "' and retry running the script."
             sys.exit()
-        self.version = readPropertyFromPropertiesFile("version", self.scriptVarSectionName, self.manifestFile)
-        self.revision = readPropertyFromPropertiesFile("revision", self.scriptVarSectionName, self.manifestFile)
-        self.buildDate = readPropertyFromPropertiesFile("buildDate", self.scriptVarSectionName, self.manifestFile)
+        self.version = read_property_from_file("version", self.script_name, self.manifest_file)
+        self.revision = read_property_from_file("revision", self.script_name, self.manifest_file)
+        self.build_date = read_property_from_file("buildDate", self.script_name, self.manifest_file)
 
 # Initialize script global properties
-scriptGlobals = ScriptGlobals()
+properties = PropertyReader()
 
 # Initialize loggers
 logging.ColorFormatter = ColorFormatter
-logging.config.fileConfig(scriptGlobals.logProperties)
-log = logging.getLogger(scriptGlobals.defaultLogger)
+logging.config.fileConfig(properties.log_properties)
+log = logging.getLogger(properties.default_logger)

@@ -1,8 +1,8 @@
-from util.Toolkit import log, jiraAuth, scriptGlobals, findStringInList
-from actionbundles.ActionBundle import ActionBundle
+from util.toolkit import log, jira_authenticate, properties, get_string_from_list
+from actionbundles.action_bundle import ActionBundle
 
 
-class abChangeStatus(ActionBundle):
+class ABChangeStatus(ActionBundle):
     '''
     classdocs.
     '''
@@ -19,7 +19,7 @@ class abChangeStatus(ActionBundle):
             k = parser.options.key
             s = parser.options.status
 
-            jira = jiraAuth(scriptGlobals.jiraURL, scriptGlobals.jiraUsername, scriptGlobals.jiraPassword)
+            jira = jira_authenticate(properties.jiraURL, properties.jiraUsername, properties.jiraPassword)
 
             # Get an issue.
             issue = jira.issue(k)
@@ -33,11 +33,11 @@ class abChangeStatus(ActionBundle):
             log.info("Issue Key       : " + k)
             log.info("Current Status  : " + str(issue.fields.status))
 
-            if str(issue.fields.status) in ('Resolved') and findStringInList(transitions, 'name', 'Deploy'):
+            if str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', 'Deploy'):
                 jira.transition_issue(issue, u'Deploy')
                 log.info("New Status      : " + 'Ready To Test')
 
-            elif str(issue.fields.status) in ('Resolved') and findStringInList(transitions, 'name', 'Deploy Issue'):
+            elif str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', 'Deploy Issue'):
                 jira.transition_issue(issue, u'Deploy Issue')
                 log.info("New Status      : " + 'Ready To Test')
 

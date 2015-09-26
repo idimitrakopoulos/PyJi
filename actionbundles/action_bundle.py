@@ -1,4 +1,4 @@
-from util.Toolkit import log
+from util.toolkit import log
 
 
 class ActionBundle(object):
