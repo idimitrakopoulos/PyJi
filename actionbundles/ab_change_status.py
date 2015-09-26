@@ -1,4 +1,4 @@
-from util.toolkit import log, jira_authenticate, properties, get_string_from_list
+from util.toolkit import log, jira_authenticate, get_string_from_list
 from actionbundles.action_bundle import ActionBundle
 
 
@@ -19,16 +19,13 @@ class ABChangeStatus(ActionBundle):
             k = parser.options.key
             s = parser.options.status
 
-            jira = jira_authenticate(properties.jiraURL, properties.jiraUsername, properties.jiraPassword)
+            jira = jira_authenticate(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
 
             # Get an issue.
             issue = jira.issue(k)
 
             # Get its valid transitions
             transitions = jira.transitions(issue)
-
-            for t in transitions:
-                print t['name']
 
             log.info("Issue Key       : " + k)
             log.info("Current Status  : " + str(issue.fields.status))

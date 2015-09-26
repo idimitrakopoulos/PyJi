@@ -1,4 +1,4 @@
-from util.toolkit import log, jira_authenticate, properties, get_string_from_list
+from util.toolkit import log, jira_authenticate, get_string_from_list
 from actionbundles.action_bundle import ActionBundle
 
 
@@ -17,9 +17,8 @@ class ABAutoTransition(ActionBundle):
 
         try:
             k = parser.options.key
-            s = parser.options.status
 
-            jira = jira_authenticate(properties.jiraURL, properties.jiraUsername, properties.jiraPassword)
+            jira = jira_authenticate(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
 
             # Get an issue.
             issue = jira.issue(k)
@@ -27,21 +26,18 @@ class ABAutoTransition(ActionBundle):
             # Get its valid transitions
             transitions = jira.transitions(issue)
 
-            for t in transitions:
-                print t['name']
-
             log.info("Issue Key       : " + k)
             log.info("Current Status  : " + str(issue.fields.status))
 
-            if str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', 'Deploy'):
+            if str(issue.fields.status) in 'Resolved' and get_string_from_list(transitions, 'name', 'Deploy'):
                 jira.transition_issue(issue, u'Deploy')
                 log.info("New Status      : " + 'Ready To Test')
 
-            elif str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', 'Deploy Issue'):
+            elif str(issue.fields.status) in 'Resolved' and get_string_from_list(transitions, 'name', 'Deploy Issue'):
                 jira.transition_issue(issue, u'Deploy Issue')
                 log.info("New Status      : " + 'Ready To Test')
 
-            elif str(issue.fields.status) in ('Ready for Release'):
+            elif str(issue.fields.status) in 'Ready for Release':
                 jira.transition_issue(issue, u'Deploy on UAT')
                 log.info("New Status      : " + 'Deploy on UAT')
 

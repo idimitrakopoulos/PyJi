@@ -203,8 +203,7 @@ class PropertyReader(object):
         self.manifest_file = read_property_from_file("manifestFile", "variousProperties", self.property_file)
         self.manifest_template_file = read_property_from_file("manifestTemplateFile", "variousProperties",
                                                               self.property_file)
-        self.script_name = read_property_from_file("scriptName", "variousProperties",
-                                                   self.property_file)
+        self.script_name = read_property_from_file("scriptName", "variousProperties", self.property_file)
 
         # [loggingProperties]
         self.custom_logging_format = read_property_from_file("customLoggingFormat", "loggingProperties",
