@@ -4,7 +4,7 @@ import getpass
 
 from util.toolkit import check_file_exists, properties, log, logging
 
-valid_actions = ['add-comment', 'change-status', 'auto-transition']
+valid_actions = ['comment', 'transition', 'autotransition']
 action = None
 mandatory_options = ['action', 'jiraURL', 'jiraUsername', 'jiraPassword']
 file_options = []
@@ -92,7 +92,7 @@ if (action):
 if (action in valid_actions or (action).startswith("_")):
     log.info("Action that was requested to execute '" + action + "'")
 
-    if (action in 'add-comment'):
+    if (action in 'comment'):
         parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
         parser.add_option("-c", "--comment", dest="comment", help="The comment you want to add (mandatory)",
                           metavar="<COMMENT>")
@@ -100,7 +100,7 @@ if (action in valid_actions or (action).startswith("_")):
         mandatory_options.append('comment')
 
 
-    elif (action in 'change-status'):
+    elif (action in 'transition'):
         parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
         parser.add_option("-s", "--status", dest="status", help="The jira ticket status (mandatory)",
                           metavar="<STATUS>")
@@ -108,7 +108,7 @@ if (action in valid_actions or (action).startswith("_")):
         mandatory_options.append('key')
         mandatory_options.append('status')
 
-    elif (action in 'auto-transition'):
+    elif (action in 'autotransition'):
         parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
 
         mandatory_options.append('key')

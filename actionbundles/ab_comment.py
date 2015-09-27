@@ -2,7 +2,7 @@ from util.toolkit import log, jira_authenticate
 from actionbundles.action_bundle import ActionBundle
 
 
-class ABAddComment(ActionBundle):
+class ABComment(ActionBundle):
     '''
     classdocs.
     '''

@@ -140,9 +140,9 @@ def ab_path_to_class(path, p):
 
 def ab_subclass_path_from_action(s):
     switcher = {
-        'add-comment': "actionbundles.ab_add_comment.ABAddComment",
-        'change-status': "actionbundles.ab_change_status.ABChangeStatus",
-        'auto-transition': "actionbundles.ab_auto_transition.ABAutoTransition",
+        'comment': "actionbundles.ab_comment.ABComment",
+        'transition': "actionbundles.ab_transition.ABTransition",
+        'autotransition': "actionbundles.ab_auto_transition.ABAutoTransition",
     }
     abPath = switcher.get(s, "n/a")
     log.debug("Action '" + s + "' maps to AB class '" + abPath + "'")

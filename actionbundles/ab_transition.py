@@ -2,7 +2,7 @@ from util.toolkit import log, jira_authenticate, get_string_from_list
 from actionbundles.action_bundle import ActionBundle
 
 
-class ABChangeStatus(ActionBundle):
+class ABTransition(ActionBundle):
     '''
     classdocs.
     '''
