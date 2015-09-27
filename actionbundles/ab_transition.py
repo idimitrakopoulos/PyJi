@@ -29,18 +29,11 @@ class ABTransition(ActionBundle):
 
             log.info("Issue Key       : " + k)
             log.info("Current Status  : " + str(issue.fields.status))
+            log.info("Requested Status: " + str(s))
 
-            if str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', 'Deploy'):
-                jira.transition_issue(issue, u'Deploy')
-                log.info("New Status      : " + 'Ready To Test')
-
-            elif str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', 'Deploy Issue'):
-                jira.transition_issue(issue, u'Deploy Issue')
-                log.info("New Status      : " + 'Ready To Test')
-
-            elif str(issue.fields.status) in ('Ready for Release'):
-                jira.transition_issue(issue, u'Deploy on UAT')
-                log.info("New Status      : " + 'Deploy on UAT')
+            if str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', s):
+                jira.transition_issue(issue, s)
+                log.info("New Status      : " + s)
 
             else:
                 log.debug("Ticket can only do the following transitions:")
