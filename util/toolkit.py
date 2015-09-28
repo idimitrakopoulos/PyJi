@@ -97,12 +97,18 @@ def generate_guid(*args):
     return data
 
 
+def check_filepath_exists(filename, separator):
+    if os.path.isfile(sys.path[0] + separator + filename):
+        return 0
+    else:
+        return 1
+
+
 def check_file_exists(filename):
     if os.path.isfile(filename):
         return 0
     else:
         return 1
-
 
 def check_folder_exists(path):
     if os.path.isdir(path):
@@ -144,9 +150,9 @@ def ab_subclass_path_from_action(s):
         'transition': "actionbundles.ab_transition.ABTransition",
         'autotransition': "actionbundles.ab_auto_transition.ABAutoTransition",
     }
-    abPath = switcher.get(s, "n/a")
-    log.debug("Action '" + s + "' maps to AB class '" + abPath + "'")
-    return abPath
+    ab_path = switcher.get(s, "n/a")
+    log.debug("Action '" + s + "' maps to AB class '" + ab_path + "'")
+    return ab_path
 
 
 def jira_authenticate(url, u, p):
@@ -204,6 +210,7 @@ class PropertyReader(object):
         self.manifest_template_file = read_property_from_file("manifestTemplateFile", "variousProperties",
                                                               self.property_file)
         self.script_name = read_property_from_file("scriptName", "variousProperties", self.property_file)
+        self.osDirSeparator = read_property_from_file("osDirSeparator", "variousProperties", self.property_file)
 
         # [loggingProperties]
         self.custom_logging_format = read_property_from_file("customLoggingFormat", "loggingProperties",
@@ -217,6 +224,10 @@ class PropertyReader(object):
         self.version = read_property_from_file("version", self.script_name, self.manifest_file)
         self.revision = read_property_from_file("revision", self.script_name, self.manifest_file)
         self.build_date = read_property_from_file("buildDate", self.script_name, self.manifest_file)
+
+
+# Change working directory in case someone executed the script outside the script's directory
+os.chdir(sys.path[0])
 
 # Initialize script global properties
 properties = PropertyReader()
