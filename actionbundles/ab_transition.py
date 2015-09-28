@@ -31,7 +31,7 @@ class ABTransition(ActionBundle):
             log.info("Current Status  : " + str(issue.fields.status))
             log.info("Requested Status: " + str(s))
 
-            if str(issue.fields.status) in ('Resolved') and get_string_from_list(transitions, 'name', s):
+            if get_string_from_list(transitions, 'name', s):
                 jira.transition_issue(issue, s)
                 log.info("New Status      : " + s)
 

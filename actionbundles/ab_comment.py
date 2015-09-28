@@ -19,17 +19,22 @@ class ABComment(ActionBundle):
 
             k = parser.options.key
             c = parser.options.comment
+            i = parser.options.identifier
 
             jira = jira_authenticate(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
 
             # Get an issue.
             issue = jira.issue(k)
 
-            log.info("Issue Key: " + k)
-            log.info("Comment  : " + c)
+            log.info("Issue Key  : " + str(k))
+            log.info("Comment    : " + str(c))
+            log.info("Identifier : " + str(i))
 
             # Add a comment to the issue
-            jira.add_comment(issue, c)
+            if i:
+                jira.add_comment(issue, "[" + str(i) + "]: " + str(c))
+            else:
+                jira.add_comment(issue, str(c))
 
         except:
             raise
