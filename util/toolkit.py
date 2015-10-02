@@ -149,6 +149,8 @@ def ab_subclass_path_from_action(s):
         'comment': "actionbundles.ab_comment.ABComment",
         'transition': "actionbundles.ab_transition.ABTransition",
         'autotransition': "actionbundles.ab_auto_transition.ABAutoTransition",
+        'createissue': "actionbundles.ab_create_issue.ABCreateIssue",
+        'projectrpt': "actionbundles.ab_project_report.ABProjectReport",
     }
     ab_path = switcher.get(s, "n/a")
     log.debug("Action '" + s + "' maps to AB class '" + ab_path + "'")
@@ -157,7 +159,7 @@ def ab_subclass_path_from_action(s):
 
 def jira_authenticate(url, u, p):
     try:
-        log.info("Attempting to authenticate to '" + url + "' (username: '" + u + "'" + "' password: '" + p + "')")
+        log.info("Attempting to authenticate to '" + url + "' (username: '" + u + "' password: '" + p + "')")
         j = JIRA(url, basic_auth=(u, p))
         log.info("Successful authentication!")
     except:

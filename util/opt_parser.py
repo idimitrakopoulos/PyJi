@@ -4,7 +4,7 @@ import getpass
 
 from util.toolkit import check_file_exists, properties, log, logging
 
-valid_actions = ['comment', 'transition', 'autotransition']
+valid_actions = ['comment', 'transition', 'autotransition', 'createissue', 'projectrpt']
 action = None
 mandatory_options = ['action', 'jiraURL', 'jiraUsername', 'jiraPassword']
 file_options = []
@@ -113,6 +113,30 @@ if (action in valid_actions or (action).startswith("_")):
 
         mandatory_options.append('key')
 
+    elif (action in 'createissue'):
+        parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
+        parser.add_option("-s", "--summary", dest="summary", help="The jira ticket summary (mandatory)",
+                          metavar="<SUMMARY>")
+        parser.add_option("-d", "--description", dest="description", help="The jira issue description (mandatory)",
+                          metavar="<DESCRIPTION>")
+        parser.add_option("-t", "--type", dest="type", help="The jira issue type (mandatory)", metavar="<TYPE>")
+        parser.add_option("-A", "--assignee", dest="assignee", help="The jira issue assignee (mandatory)",
+                          metavar="<ASSIGNEE>")
+
+        mandatory_options.append('key')
+        mandatory_options.append('summary')
+        mandatory_options.append('description')
+        mandatory_options.append('type')
+        mandatory_options.append('assignee')
+
+    elif (action in 'projectrpt'):
+        parser.add_option("-f", "--inputfile", dest="input_file", help="The project property file (mandatory)",
+                          metavar="<IFILE>")
+        parser.add_option("-o", "--outputfile", dest="output_file",
+                          help="The output file that contains all data (mandatory)", metavar="<OFILE>")
+
+        mandatory_options.append('input_file')
+        mandatory_options.append('output_file')
 
 else:
     log.critical("Action '" + action + "' is allowed but there is no implementation for it at this point :-(")
