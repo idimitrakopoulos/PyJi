@@ -17,7 +17,7 @@ from util.color_formatter import ColorFormatter
 
 
 def die(msg="Error"):
-    log.warn(msg)
+    log.fatal(msg)
     sys.exit()
 
 
@@ -52,7 +52,7 @@ def read_property_from_file(propertyName, propertiesSectionName, propertiesFilen
             cfg.read(propertiesFilename)
             result = cfg.get(propertiesSectionName, propertyName)
             if (globals().has_key('log')):
-                log.warn(
+                log.debug(
                     "Value of '" + propertyName + "' from '[" + propertiesSectionName + "]' in '" + propertiesFilename + "' = '" + result + "'")
                 if result == "" and warnIfEmpty:
                     log.warn("No value exists for '" + propertyName + "' on section '[" + propertiesSectionName + "]' inside file '" + propertiesFilename + "'")

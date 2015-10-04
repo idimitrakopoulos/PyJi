@@ -1,0 +1,23 @@
+[project]
+# PROJECT NAME
+project_name=VF GR MyVodafone 3.2.x
+date_format=%d/%m/%Y
+
+# BASELINE
+baseline_md=149
+
+# KICK OFF
+kick_off_date=31/7/2015
+
+# UAT
+uat_start_baseline=14/9/2015
+uat_start_actual=14/9/2015
+
+# LIVE
+go_live_baseline=5/10/2015
+go_live_actual=5/10/2015
+
+# ISSUE FILTERS
+issue_jql=('project = vfgrma AND fixVersion = 3.2.x AND timespent > 0','project = vfgrmvuat AND fixVersion = 3.2.x',)
+
+
