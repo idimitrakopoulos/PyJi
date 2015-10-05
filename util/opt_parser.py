@@ -132,14 +132,12 @@ if (action in valid_actions or (action).startswith("_")):
     elif (action in 'projectrpt'):
         parser.add_option("-f", "--inputfile", dest="input_file", help="The project property file (mandatory)",
                           metavar="<IFILE>")
-        parser.add_option("-o", "--outputfile", dest="output_file",
-                          help="The output file that contains all data (mandatory)", metavar="<OFILE>")
+
         parser.add_option("-e", "--estimatetocomplete", dest="estimate_to_complete",
                           help="The estimate to complete in md, if not provided then one will be calculated",
                           metavar="<ETC>")
 
         mandatory_options.append('input_file')
-        mandatory_options.append('output_file')
 
 else:
     log.critical("Action '" + action + "' is allowed but there is no implementation for it at this point :-(")

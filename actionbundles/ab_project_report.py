@@ -359,9 +359,6 @@ class ABProjectReport(ActionBundle):
             # Input File
             self.input_file = parser.options.input_file
 
-            # Output File
-            self.output_file = parser.options.output_file
-
             # Estimate To Complete
             self.estimate_to_complete = parser.options.estimate_to_complete
 
