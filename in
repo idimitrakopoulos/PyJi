@@ -20,4 +20,5 @@ go_live_actual=5/10/2015
 # ISSUE FILTERS
 issue_jql=('project = vfgrma AND fixVersion = 3.2.x AND timespent > 0','project = vfgrmvuat AND fixVersion = 3.2.x',)
 
-
+# OUTPUT
+output_location=/var/www/paragonium.com/public_html/reports/vfgr32.html

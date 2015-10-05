@@ -10,6 +10,343 @@ class ABProjectReport(ActionBundle):
     classdocs.
     '''
 
+    def export_to_html(self, project_name,
+                       kick_off_date,
+                       uat_start_baseline_date,
+                       uat_start_actual_date,
+                       golive_baseline_date,
+                       golive_actual_date,
+                       on_time,
+                       effort_baseline_md,
+                       effort_actual_md,
+                       effort_remaining_md,
+                       effort_at_completion_md,
+                       in_effort):
+        """
+
+        :rtype : HTML
+        """
+        return '''
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Exus - Web & Mobile</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/sb-admin.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Exus - Web & Mobile</a>
+            </div>
+            <!-- Top Menu Items -->
+        </nav>
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            {0}
+                        </h1>
+                    </div>
+                </div>
+                <!-- /.row -->
+                <!-- /.row -->
+                <div class="row">
+                       <div class="col-lg-4 col-md-6">
+                           <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-hourglass-1 fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{1}</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">Kick Off</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-users fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{2}</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">UAT Start (Baseline)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-users fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{3}</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">UAT Start (Actual)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- /.row -->
+                 <!-- /.row -->
+                <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-hourglass-3 fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{4}</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">GoLive (Baseline)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-hourglass-3 fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{5}</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">GoLive (Actual)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-green">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-clock-o fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">{6}</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">OnTime</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+                 <div class="row">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                    </div>
+                </div>
+                <!-- /.row -->
+                <div class="row">
+
+                    <div class="col-lg-6 col-md-6">
+                       <div class="panel panel-yellow">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-briefcase fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{7} md</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">Effort (Baseline)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="panel panel-yellow">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-bomb fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{8} md</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">Effort (Actual)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- /.row -->
+                 <!-- /.row -->
+                <div class="row">
+
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-yellow">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-thumbs-up fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{9} md</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">Effort (Remaining)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-yellow">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-code fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="largeF">{10} md</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">Effort (At Completion)</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-green">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-clock-o fa-3x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">{11}</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">inEffort</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
+
+
+    '''.format(str(project_name),
+               str(kick_off_date),
+               str(uat_start_baseline_date),
+               str(uat_start_actual_date),
+               str(golive_baseline_date),
+               str(golive_actual_date),
+               str(on_time),
+               str(effort_baseline_md),
+               str(effort_actual_md),
+               str(effort_remaining_md),
+               str(effort_at_completion_md),
+               str(in_effort))
+
     def __init__(self, parser):
         '''
         Constructor
@@ -49,6 +386,7 @@ class ABProjectReport(ActionBundle):
             self.go_live_actual = datetime.datetime.strptime(
                 read_property_from_file("go_live_actual", "project", self.input_file), self.date_format).date()
             self.issue_jql = list(ast.literal_eval(read_property_from_file("issue_jql", "project", self.input_file)))
+            self.output_location = read_property_from_file("output_location", "project", self.input_file)
 
             jira = jira_authenticate(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
 
@@ -129,6 +467,22 @@ class ABProjectReport(ActionBundle):
 
             log.info("In Effort                     : " + str("%.2f" % _ie))
             log.info("--------------------------------------------------------")
+
+            html_code = self.export_to_html(self.project_name,
+                                            self.kick_off_date,
+                                            self.uat_start_baseline,
+                                            self.uat_start_actual,
+                                            self.go_live_baseline,
+                                            self.go_live_actual,
+                                            _ot,
+                                            self.baseline_md,
+                                            _t,
+                                            _etc,
+                                            _eac,
+                                            _ie, )
+
+            with open(self.output_location, "w") as text_file:
+                text_file.write(html_code)
 
         except:
             raise
