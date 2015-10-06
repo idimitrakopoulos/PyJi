@@ -471,12 +471,12 @@ class ABProjectReport(ActionBundle):
                                             self.uat_start_actual.strftime(self.date_format),
                                             self.go_live_baseline.strftime(self.date_format),
                                             self.go_live_actual.strftime(self.date_format),
-                                            str("%.2f" % _ot),
+                                            "%.2f" % _ot,
                                             self.baseline_md,
-                                            str("%.2f" % _t),
-                                            str("%.2f" % _etc),
-                                            str("%.2f" % _eac),
-                                            str("%.2f" % _ie), )
+                                            "%.2f" % _t,
+                                            "%.2f" % _etc,
+                                            "%.2f" % _eac,
+                                            "%.2f" % _ie)
 
             with open(self.output_location, "w") as text_file:
                 text_file.write(html_code)
