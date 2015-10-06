@@ -473,7 +473,7 @@ class ABProjectReport(ActionBundle):
                                             self.go_live_actual.strftime(self.date_format),
                                             "%.2f" % _ot,
                                             self.baseline_md,
-                                            "%.2f" % _t,
+                                            _t,
                                             "%.2f" % _etc,
                                             "%.2f" % _eac,
                                             "%.2f" % _ie)
