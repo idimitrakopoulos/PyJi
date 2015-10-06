@@ -422,7 +422,7 @@ class ABProjectReport(ActionBundle):
             # ESTIMATE TO COMPLETE
             #############################################
             _etc = 0.0
-            if float(_t) > int(self.baseline_md) and self.estimate_to_complete is None:
+            if float(_t) > float(self.baseline_md) and self.estimate_to_complete is None:
                 die("Time spent " + str(
                     _t) + " md is higher than the baseline " + self.baseline_md + " md so an estimate to complete calculation cannot take place, please use -e switch to provide a manual E.t.C.")
             elif self.estimate_to_complete is None:
