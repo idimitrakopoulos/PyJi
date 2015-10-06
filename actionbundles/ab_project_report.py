@@ -474,8 +474,8 @@ class ABProjectReport(ActionBundle):
                                             "%.2f" % _ot,
                                             self.baseline_md,
                                             _t,
-                                            "%.2f" % _etc,
-                                            "%.2f" % _eac,
+                                            _etc,
+                                            _eac,
                                             "%.2f" % _ie)
 
             with open(self.output_location, "w") as text_file:
