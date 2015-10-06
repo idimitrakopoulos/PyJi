@@ -422,7 +422,7 @@ class ABProjectReport(ActionBundle):
             # ESTIMATE TO COMPLETE
             #############################################
             _etc = 0
-            if self.baseline_md < _t and self.estimate_to_complete is None:
+            if _t > int(self.baseline_md) and self.estimate_to_complete is None:
                 die("Time spent " + str(
                     _t) + " md is higher than the baseline " + self.baseline_md + " md so an estimate to complete calculation cannot take place, please use -e switch to provide a manual E.t.C.")
             elif self.estimate_to_complete is None:
@@ -466,20 +466,21 @@ class ABProjectReport(ActionBundle):
             log.info("--------------------------------------------------------")
 
             html_code = self.export_to_html(self.project_name,
-                                            self.kick_off_date,
-                                            self.uat_start_baseline,
-                                            self.uat_start_actual,
-                                            self.go_live_baseline,
-                                            self.go_live_actual,
-                                            _ot,
+                                            self.kick_off_date.strftime(self.date_format),
+                                            self.uat_start_baseline.strftime(self.date_format),
+                                            self.uat_start_actual.strftime(self.date_format),
+                                            self.go_live_baseline.strftime(self.date_format),
+                                            self.go_live_actual.strftime(self.date_format),
+                                            str("%.2f" % _ot),
                                             self.baseline_md,
-                                            _t,
-                                            _etc,
-                                            _eac,
-                                            _ie, )
+                                            str("%.2f" % _t),
+                                            str("%.2f" % _etc),
+                                            str("%.2f" % _eac),
+                                            str("%.2f" % _ie), )
 
             with open(self.output_location, "w") as text_file:
                 text_file.write(html_code)
+                log.debug("Output added to " + self.output_location)
 
         except:
             raise
