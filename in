@@ -1,24 +1,24 @@
 [project]
 # PROJECT NAME
-project_name=VF GR MyVodafone 3.2.x
+project_name=ICAP FindBiz Premium Services
 date_format=%d/%m/%Y
 
 # BASELINE
-baseline_md=149
+baseline_md=13
 
 # KICK OFF
-kick_off_date=31/7/2015
+kick_off_date=1/7/2015
 
 # UAT
-uat_start_baseline=14/9/2015
-uat_start_actual=14/9/2015
+uat_start_baseline=15/5/2016
+uat_start_actual=15/5/2016
 
 # LIVE
-go_live_baseline=5/10/2015
-go_live_actual=5/10/2015
+go_live_baseline=30/5/2015
+go_live_actual=30/5/2015
 
 # ISSUE FILTERS
-issue_jql=('project = vfgrma AND fixVersion = 3.2.x AND timespent > 0','project = vfgrmvuat AND fixVersion = 3.2.x',)
+issue_jql=('project = ICFBPS AND timespent>0',)
 
 # OUTPUT
-output_location=/var/www/paragonium.com/public_html/reports/vfgr32.html
+output_location=/var/www/paragonium.com/public_html/reports/project.html
