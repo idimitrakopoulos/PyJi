@@ -1,24 +1,34 @@
 [project]
 # PROJECT NAME
-project_name=ICAP FindBiz Premium Services
+project_name=VF GR 3.2.x
 date_format=%d/%m/%Y
 
 # BASELINE
-baseline_md=13
+baseline_md=149
 
 # KICK OFF
-kick_off_date=1/7/2015
+kick_off_date=31/7/2015
 
 # UAT
-uat_start_baseline=15/5/2016
-uat_start_actual=15/5/2016
+uat_start_baseline=14/9/2015
+uat_start_actual=14/9/2015
 
 # LIVE
-go_live_baseline=30/5/2015
-go_live_actual=30/5/2015
+go_live_baseline=5/10/2015
+go_live_actual=5/10/2015
+
 
 # ISSUE FILTERS
-issue_jql=('project = ICFBPS AND timespent>0',)
+issue_jql=('project = vfgrma AND fixVersion = 3.2.x AND timespent > 0',)
+
+# RATES
+md_rate_offer=360
+md_rate_internal=414
+
+# COSTS
+other_costs_baseline=0
+other_costs_actual=0
+
 
 # OUTPUT
 output_location=/var/www/paragonium.com/public_html/reports/project.html

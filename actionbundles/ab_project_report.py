@@ -1,5 +1,6 @@
 import ast
-import datetime
+import os
+from datetime import datetime
 
 from util.toolkit import log, jira_authenticate, read_property_from_file, check_file_exists, die
 from actionbundles.action_bundle import ActionBundle
@@ -363,27 +364,36 @@ class ABProjectReport(ActionBundle):
             self.estimate_to_complete = parser.options.estimate_to_complete
 
             # Time spent
-            _t = 0.0
+            _effort_actual_md = 0.0
 
             # Check if input file exists
             if check_file_exists(self.input_file) == 1:
                 die("File '" + self.input_file + "' doesn't exist. Fatal.")
-
+            self.euro_sign = u" \u20AC"
             self.project_name = read_property_from_file("project_name", "project", self.input_file)
             self.baseline_md = read_property_from_file("baseline_md", "project", self.input_file)
             self.date_format = read_property_from_file("date_format", "project", self.input_file)
-            self.kick_off_date = datetime.datetime.strptime(
+            self.kick_off_date = datetime.strptime(
                 read_property_from_file("kick_off_date", "project", self.input_file), self.date_format).date()
-            self.uat_start_baseline = datetime.datetime.strptime(
+            self.uat_start_baseline = datetime.strptime(
                 read_property_from_file("uat_start_baseline", "project", self.input_file), self.date_format).date()
-            self.uat_start_actual = datetime.datetime.strptime(
+            self.uat_start_actual = datetime.strptime(
                 read_property_from_file("uat_start_actual", "project", self.input_file), self.date_format).date()
-            self.go_live_baseline = datetime.datetime.strptime(
+            self.go_live_baseline = datetime.strptime(
                 read_property_from_file("go_live_baseline", "project", self.input_file), self.date_format).date()
-            self.go_live_actual = datetime.datetime.strptime(
+            self.go_live_actual = datetime.strptime(
                 read_property_from_file("go_live_actual", "project", self.input_file), self.date_format).date()
             self.issue_jql = list(ast.literal_eval(read_property_from_file("issue_jql", "project", self.input_file)))
             self.output_location = read_property_from_file("output_location", "project", self.input_file)
+            # Add the date today in the filename
+            self.output_location = str(self.output_location).replace(os.path.basename(self.output_location),
+                                                                     datetime.today().strftime("%Y%m%d_")
+                                                                     + os.path.basename(self.output_location))
+
+            self.md_rate_offer = read_property_from_file("md_rate_offer", "project", self.input_file)
+            self.md_rate_internal = read_property_from_file("md_rate_internal", "project", self.input_file)
+            self.other_costs_baseline = read_property_from_file("other_costs_baseline", "project", self.input_file)
+            self.other_costs_actual = read_property_from_file("other_costs_actual", "project", self.input_file)
 
             jira = jira_authenticate(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
 
@@ -410,27 +420,27 @@ class ABProjectReport(ActionBundle):
                     issue = jira.issue(k)
                     # Get issue's timespent in seconds and add it to the overall sum
                     if issue.fields.timespent is not None:
-                        _t = _t + issue.fields.timespent
-                log.debug("Time spent so far is     : " + str(("%.2f" % ((_t / 3600) / 8))))
+                        _effort_actual_md = _effort_actual_md + issue.fields.timespent
+                log.debug("Time spent so far is     : " + str(("%.2f" % ((_effort_actual_md / 3600) / 8))))
 
             # Switch timespent to md and round it off to 2 digits
-            _t = "%.2f" % ((_t / 3600) / 8)
+            _effort_actual_md = "%.2f" % ((_effort_actual_md / 3600) / 8)
 
-            log.info("Effort (Actual)               : " + str(_t) + " md")
+            log.info("Effort (Actual)               : " + str(_effort_actual_md) + " md")
 
             #############################################
             # ESTIMATE TO COMPLETE
             #############################################
-            _etc = 0.0
-            if float(_t) > float(self.baseline_md) and self.estimate_to_complete is None:
+            _effort_remaining_md = 0.0
+            if float(_effort_actual_md) > float(self.baseline_md) and self.estimate_to_complete is None:
                 die("Time spent " + str(
-                    _t) + " md is higher than the baseline " + self.baseline_md + " md so an estimate to complete calculation cannot take place, please use -e switch to provide a manual E.t.C.")
+                    _effort_actual_md) + " md is higher than the baseline " + self.baseline_md + " md so an estimate to complete calculation cannot take place, please use -e switch to provide a manual E.t.C.")
             elif self.estimate_to_complete is None:
-                _etc = float(self.baseline_md) - float(_t)
+                _effort_remaining_md = float(self.baseline_md) - float(_effort_actual_md)
             else:
-                _etc = self.estimate_to_complete
+                _effort_remaining_md = self.estimate_to_complete
 
-            log.info("Effort (Remaining)            : " + str(_etc) + " md")
+            log.info("Effort (Remaining)            : " + str(_effort_remaining_md) + " md")
 
 
             #############################################
@@ -438,9 +448,9 @@ class ABProjectReport(ActionBundle):
             #############################################
 
             # Calculate Estimate At Completion
-            _eac = float(_t) + float(_etc)
+            _effort_at_completion_md = float(_effort_actual_md) + float(_effort_remaining_md)
 
-            log.info("Effort (At Completion)        : " + str(_eac) + " md")
+            log.info("Effort (At Completion)        : " + str(_effort_at_completion_md) + " md")
 
             #############################################
             # ON TIME
@@ -449,10 +459,8 @@ class ABProjectReport(ActionBundle):
             _b = self.go_live_baseline - self.kick_off_date
 
             # On Time
-            _ot = (_a.total_seconds() / _b.total_seconds())
+            _on_time = (_a.total_seconds() / _b.total_seconds())
 
-            log.info("--------------------------------------------------------")
-            log.info("On Time                       : " + str("%.2f" % _ot))
 
 
             #############################################
@@ -460,10 +468,47 @@ class ABProjectReport(ActionBundle):
             #############################################
 
             # In Effort
-            _ie = _eac / float(self.baseline_md)
+            _in_effort = _effort_at_completion_md / float(self.baseline_md)
 
-            log.info("In Effort                     : " + str("%.2f" % _ie))
+
+
+
+            #############################################
+            # BUDGET
+            #############################################
+            _revenue = float(self.md_rate_offer) * float(self.baseline_md)
+            log.info("Revenue                       : " + str(_revenue) + self.euro_sign)
+            log.info("md Rate (Offer)               : " + str(self.md_rate_offer) + self.euro_sign)
+            log.info("md Rate (Internal)            : " + str(self.md_rate_internal) + self.euro_sign)
+
+            _md_cost_baseline = float(self.md_rate_internal) * float(self.baseline_md)
+            log.info("md Cost (Baseline)            : " + str(_md_cost_baseline) + self.euro_sign)
+
+            _md_cost_eac = float(self.md_rate_internal) * float(_effort_at_completion_md)
+            log.info("md Cost (At Completion)       : " + str(_md_cost_eac) + self.euro_sign)
+            log.info("Other Costs (Baseline)        : " + str(self.other_costs_baseline) + self.euro_sign)
+            log.info("Other Costs (Actual)          : " + str(self.other_costs_actual) + self.euro_sign)
+
+            _pnl_baseline = ((float(_revenue) - float(_md_cost_baseline) - float(
+                self.other_costs_baseline)) / _revenue) * 100
+            log.info("PnL (Baseline)                : " + str("%.2f" % _pnl_baseline) + "%")
+
+            _pnl_eac = ((float(_revenue) - float(_md_cost_eac) - float(self.other_costs_actual)) / _revenue) * 100
+            log.info("PnL (At Completion)           : " + str("%.2f" % _pnl_eac) + "%")
+
+
+
+            #############################################
+            # IN BUDGET
+            #############################################
+            _in_budget = 1 + (float(_pnl_baseline / 100) - float(_pnl_eac / 100))
+
             log.info("--------------------------------------------------------")
+            log.info("On Time                       : " + str("%.2f" % _on_time))
+            log.info("In Effort                     : " + str("%.2f" % _in_effort))
+            log.info("In Budget                     : " + str("%.2f" % _in_budget))
+            log.info("--------------------------------------------------------")
+
 
             html_code = self.export_to_html(self.project_name,
                                             self.kick_off_date.strftime(self.date_format),
@@ -471,12 +516,14 @@ class ABProjectReport(ActionBundle):
                                             self.uat_start_actual.strftime(self.date_format),
                                             self.go_live_baseline.strftime(self.date_format),
                                             self.go_live_actual.strftime(self.date_format),
-                                            "%.2f" % _ot,
+                                            "%.2f" % _on_time,
                                             self.baseline_md,
-                                            _t,
-                                            _etc,
-                                            _eac,
-                                            "%.2f" % _ie)
+                                            _effort_actual_md,
+                                            _effort_remaining_md,
+                                            _effort_at_completion_md,
+                                            "%.2f" % _in_effort)
+
+
 
             with open(self.output_location, "w") as text_file:
                 text_file.write(html_code)
