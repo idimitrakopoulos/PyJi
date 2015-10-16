@@ -22,12 +22,23 @@ class ABProjectReport(ActionBundle):
                        effort_actual_md,
                        effort_remaining_md,
                        effort_at_completion_md,
-                       in_effort):
+                       in_effort,
+                       revenue,
+                       md_rate_offer,
+                       md_rate_internal,
+                       md_cost_baseline,
+                       md_cost_eac,
+                       other_costs_baseline,
+                       other_costs_actual,
+                       pnl_baseline,
+                       pnl_eac,
+                       in_budget):
         """
 
         :rtype : HTML
         """
         return '''
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -76,7 +87,7 @@ class ABProjectReport(ActionBundle):
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            {0}
+                           {0}
                         </h1>
                     </div>
                 </div>
@@ -85,236 +96,356 @@ class ABProjectReport(ActionBundle):
                 <div class="row">
                        <div class="col-lg-4 col-md-6">
                            <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-hourglass-1 fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{1}</div>
-                                    </div>
-                                </div>
-                            </div>
+
                                 <div class="panel-footer">
                                     <span class="pull-left largeF">Kick Off</span>
+                                    <span class="pull-right largeF">{1}</span>
                                     <div class="clearfix"></div>
                                 </div>
 
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6">
-                       <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-users fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{2}</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left largeF">UAT Start (Baseline)</span>
-                                    <div class="clearfix"></div>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-users fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{3}</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left largeF">UAT Start (Actual)</span>
-                                    <div class="clearfix"></div>
-                                </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- /.row -->
-                 <!-- /.row -->
-                <div class="row">
-                                        <div class="col-lg-4 col-md-6">
-                       <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-hourglass-3 fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{4}</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left largeF">GoLive (Baseline)</span>
-                                    <div class="clearfix"></div>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-hourglass-3 fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{5}</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left largeF">GoLive (Actual)</span>
-                                    <div class="clearfix"></div>
-                                </div>
-
-                        </div>
-                    </div>
-
 
                     <div class="col-lg-4 col-md-6">
-                        <div class="panel panel-green">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-clock-o fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">{6}</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left largeF">OnTime</span>
-                                    <div class="clearfix"></div>
-                                </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- /.row -->
-                 <div class="row">
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
-                    </div>
-                </div>
-                <!-- /.row -->
-                <div class="row">
-
-                    <div class="col-lg-6 col-md-6">
                        <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-briefcase fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{7} md</div>
-                                    </div>
-                                </div>
-                            </div>
+
                                 <div class="panel-footer">
                                     <span class="pull-left largeF">Effort (Baseline)</span>
+                                      <span class="pull-right largeF">{7}</span>
                                     <div class="clearfix"></div>
                                 </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-bomb fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{8} md</div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
                                 <div class="panel-footer">
-                                    <span class="pull-left largeF">Effort (Actual)</span>
+                                    <span class="pull-left largeF">Revenue</span>
+                                      <span class="pull-right largeF">{12}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+   <div class="row">
+
+  <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-primary">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">GoLive (Baseline)</span>
+                                     <span class="pull-right largeF">{4}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-yellow">
+
+                                <div class="panel-footer panel-darker">
+                                    <span class="pull-left largeF"><strong>Effort (Actual)</strong></span>
+                                    <span class="pull-right largeF "><strong>{8}</strong></span>
                                     <div class="clearfix"></div>
                                 </div>
 
                         </div>
                     </div>
 
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">md Rate (Offer)</span>
+                                    <span class="pull-right largeF">{13}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-primary">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">GoLive (Actual)</span>
+                                    <span class="pull-right largeF">{5}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+                     <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-yellow">
+
+                                <div class="panel-footer panel-darker">
+                                    <span class="pull-left largeF"><strong>Effort (Remaining)</strong></span>
+                                    <span class="pull-right largeF"><strong>{9}</strong> </span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">md Rate (Internal)</span>
+                                    <span class="pull-right largeF">{14}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                 </div>
+                 <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-primary">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">UAT Start (Baseline)</span>
+                                    <span class="pull-right largeF">{2}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                     <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-yellow">
+
+                                <div class="panel-footer panel-darker">
+                                    <span class="pull-left largeF"><strong>Effort (At Completion)</strong></span>
+                                    <span class="pull-right largeF"><strong>{10}</strong> </span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer panel-darker">
+                                    <span class="pull-left largeF"><strong>md Cost (Baseline)</strong></span>
+                                    <span class="pull-right largeF"><strong>{15}</strong></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-primary">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">UAT Start (Actual)</span>
+                                    <span class="pull-right largeF">{3}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                        </div>
+                    </div>
+                      <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer panel-darker">
+                                    <span class="pull-left largeF"><strong>md Cost (at Completion)</strong></span>
+                                    <span class="pull-right largeF"><strong>{16}</strong></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">Other Costs (Baseline)</span>
+                                    <span class="pull-right largeF">{17}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer">
+                                    <span class="pull-left largeF">Other Costs (Actual)</span>
+                                    <span class="pull-right largeF">{18}</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer panel-darker">
+                                    <span class="pull-left largeF"><strong>PnL (Baseline)</strong></span>
+                                    <span class="pull-right largeF"><strong>{19}</strong></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-info">
+
+                                <div class="panel-footer panel-darker">
+                                    <span class="pull-left largeF"><strong>PnL (at Completion)</strong></span>
+                                    <span class="pull-right largeF"><strong>{20}</strong></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                        </div>
+                    </div>
+            </div>
+
                  <!-- /.row -->
                 <div class="row">
 
                     <div class="col-lg-4 col-md-6">
-                       <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-thumbs-up fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{9} md</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left largeF">Effort (Remaining)</span>
-                                    <div class="clearfix"></div>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-code fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="largeF">{10} md</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left largeF">Effort (At Completion)</span>
+                       <div class="panel panel-green">
+
+                                <div class="panel-heading panel-green">
+                                    <span class="pull-left largeF">OnTime</span>
+                                    <span class="pull-right largeF">{6}</span>
                                     <div class="clearfix"></div>
                                 </div>
 
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6">
+                     <div class="col-lg-4 col-md-6">
                         <div class="panel panel-green">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-clock-o fa-3x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">{11}</div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="panel-footer">
+
+                                <div class="panel-heading panel-green">
                                     <span class="pull-left largeF">inEffort</span>
+                                    <span class="pull-right largeF">{11} </span>
                                     <div class="clearfix"></div>
                                 </div>
 
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                       <div class="panel panel-green">
+
+                                <div class="panel-heading panel-green">
+                                    <span class="pull-left largeF">In Budget</span>
+                                    <span class="pull-right largeF">{21} </span>
+                                    <div class="clearfix"></div>
+                                </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.row -->
+                 <!-- /.row
+                <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-red">
+                        <div class="panel-heading largeF">
+                            Risks
+                        </div>
 
+                        <div class="panel-body">
+                            <div class="dataTable_wrapper">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Risk</th>
+                                            <th>Created</th>
+                                            <th>Est. Resolution</th>
+                                            <th>Mitigation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="odd">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="even">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="odd">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="even">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="odd">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="even">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="odd">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="even">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                   </div>
+                   </div>
+                </div>
 
             </div>
             <!-- /.container-fluid -->
@@ -335,6 +466,8 @@ class ABProjectReport(ActionBundle):
 </html>
 
 
+
+
     '''.format(str(project_name),
                str(kick_off_date),
                str(uat_start_baseline_date),
@@ -346,7 +479,17 @@ class ABProjectReport(ActionBundle):
                str(effort_actual_md),
                str(effort_remaining_md),
                str(effort_at_completion_md),
-               str(in_effort))
+               str(in_effort),
+               str(revenue),
+               str(md_rate_offer),
+               str(md_rate_internal),
+               str(md_cost_baseline),
+               str(md_cost_eac),
+               str(other_costs_baseline),
+               str(other_costs_actual),
+               str(pnl_baseline),
+               str(pnl_eac),
+               str(in_budget))
 
     def __init__(self, parser):
         '''
@@ -369,7 +512,8 @@ class ABProjectReport(ActionBundle):
             # Check if input file exists
             if check_file_exists(self.input_file) == 1:
                 die("File '" + self.input_file + "' doesn't exist. Fatal.")
-            self.euro_sign = u" \u20AC"
+            self.euro_sign_encoded = u" \u20AC"
+            self.euro = " eur"
             self.project_name = read_property_from_file("project_name", "project", self.input_file)
             self.baseline_md = read_property_from_file("baseline_md", "project", self.input_file)
             self.date_format = read_property_from_file("date_format", "project", self.input_file)
@@ -477,17 +621,17 @@ class ABProjectReport(ActionBundle):
             # BUDGET
             #############################################
             _revenue = float(self.md_rate_offer) * float(self.baseline_md)
-            log.info("Revenue                       : " + str(_revenue) + self.euro_sign)
-            log.info("md Rate (Offer)               : " + str(self.md_rate_offer) + self.euro_sign)
-            log.info("md Rate (Internal)            : " + str(self.md_rate_internal) + self.euro_sign)
+            log.info("Revenue                       : " + str(_revenue) + self.euro_sign_encoded)
+            log.info("md Rate (Offer)               : " + str(self.md_rate_offer) + self.euro_sign_encoded)
+            log.info("md Rate (Internal)            : " + str(self.md_rate_internal) + self.euro_sign_encoded)
 
             _md_cost_baseline = float(self.md_rate_internal) * float(self.baseline_md)
-            log.info("md Cost (Baseline)            : " + str(_md_cost_baseline) + self.euro_sign)
+            log.info("md Cost (Baseline)            : " + str(_md_cost_baseline) + self.euro_sign_encoded)
 
             _md_cost_eac = float(self.md_rate_internal) * float(_effort_at_completion_md)
-            log.info("md Cost (At Completion)       : " + str(_md_cost_eac) + self.euro_sign)
-            log.info("Other Costs (Baseline)        : " + str(self.other_costs_baseline) + self.euro_sign)
-            log.info("Other Costs (Actual)          : " + str(self.other_costs_actual) + self.euro_sign)
+            log.info("md Cost (At Completion)       : " + str(_md_cost_eac) + self.euro_sign_encoded)
+            log.info("Other Costs (Baseline)        : " + str(self.other_costs_baseline) + self.euro_sign_encoded)
+            log.info("Other Costs (Actual)          : " + str(self.other_costs_actual) + self.euro_sign_encoded)
 
             _pnl_baseline = ((float(_revenue) - float(_md_cost_baseline) - float(
                 self.other_costs_baseline)) / _revenue) * 100
@@ -521,7 +665,17 @@ class ABProjectReport(ActionBundle):
                                             _effort_actual_md,
                                             _effort_remaining_md,
                                             _effort_at_completion_md,
-                                            "%.2f" % _in_effort)
+                                            "%.2f" % _in_effort,
+                                            str(_revenue) + self.euro,
+                                            str(self.md_rate_offer) + self.euro,
+                                            str(self.md_rate_internal) + self.euro,
+                                            str(_md_cost_baseline) + self.euro,
+                                            str(_md_cost_eac) + self.euro,
+                                            str(self.other_costs_baseline) + self.euro,
+                                            str(self.other_costs_actual) + self.euro,
+                                            str("%.2f" % _pnl_baseline) + "%",
+                                            str("%.2f" % _pnl_eac) + "%",
+                                            str("%.2f" % _in_budget))
 
 
 
