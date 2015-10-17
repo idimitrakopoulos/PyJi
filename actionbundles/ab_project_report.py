@@ -531,9 +531,14 @@ class ABProjectReport(ActionBundle):
             self.issue_jql = list(ast.literal_eval(read_property_from_file("issue_jql", "project", self.input_file)))
             self.output_location = read_property_from_file("output_location", "project", self.input_file)
             # Add the date today in the filename
-            self.output_location = str(self.output_location).replace(os.path.basename(self.output_location),
+            self.output_location_date = str(self.output_location).replace(os.path.basename(self.output_location),
                                                                      datetime.today().strftime("%Y%m%d_")
                                                                      + os.path.basename(self.output_location))
+
+            # Add "latest" in the filename
+            self.output_location_latest = str(self.output_location).replace(os.path.basename(self.output_location),
+                                                                            "latest_"
+                                                                            + os.path.basename(self.output_location))
 
             self.md_rate_offer = read_property_from_file("md_rate_offer", "project", self.input_file)
             self.md_rate_internal = read_property_from_file("md_rate_internal", "project", self.input_file)
@@ -678,11 +683,13 @@ class ABProjectReport(ActionBundle):
                                             str("%.2f" % _pnl_eac) + "%",
                                             str("%.2f" % _in_budget))
 
-
-
-            with open(self.output_location, "w") as text_file:
+            with open(self.output_location_date, "w") as text_file:
                 text_file.write(html_code)
-                log.debug("Output added to " + self.output_location)
+                log.debug("Output added to " + self.output_location_date)
+
+            with open(self.output_location_latest, "w") as text_file:
+                text_file.write(html_code)
+                log.debug("Output added to " + self.output_location_latest)
 
         except:
             raise
