@@ -130,12 +130,18 @@ if (action in valid_actions or (action).startswith("_")):
         mandatory_options.append('assignee')
 
     elif (action in 'projectrpt'):
+
         parser.add_option("-f", "--inputfile", dest="input_file", help="The project property file (mandatory)",
                           metavar="<IFILE>")
 
         parser.add_option("-e", "--estimatetocomplete", dest="estimate_to_complete",
                           help="The estimate to complete in md, if not provided then one will be calculated",
                           metavar="<ETC>")
+
+        parser.add_option("-d", "--datelimit", dest="date_limit", default=None,
+                          help="Count worklogs that were created until this day (included!) Format should be 'dd/mm/YYYY'.",
+                          metavar="<DLIMIT>")
+
 
         mandatory_options.append('input_file')
 

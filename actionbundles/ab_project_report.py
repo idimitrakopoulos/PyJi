@@ -1,6 +1,6 @@
 import ast
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from util.toolkit import log, jira_authenticate, read_property_from_file, check_file_exists, die
 from actionbundles.action_bundle import ActionBundle
@@ -507,6 +507,7 @@ class ABProjectReport(ActionBundle):
             # Estimate To Complete
             self.estimate_to_complete = parser.options.estimate_to_complete
 
+
             # Time spent
             _effort_actual_md = 0.0
 
@@ -518,6 +519,15 @@ class ABProjectReport(ActionBundle):
             self.project_name = read_property_from_file("project_name", "project", self.input_file)
             self.baseline_md = read_property_from_file("baseline_md", "project", self.input_file)
             self.date_format = read_property_from_file("date_format", "project", self.input_file)
+
+            # Datelimit
+            self.date_limit = None
+            if parser.options.date_limit is not None:
+                self.date_limit = datetime.strptime(parser.options.date_limit, self.date_format) + timedelta(hours=23,
+                                                                                                             minutes=59,
+                                                                                                             seconds=59)
+
+            # Project related values
             self.kick_off_date = datetime.strptime(
                 read_property_from_file("kick_off_date", "project", self.input_file), self.date_format).date()
             self.uat_start_baseline = datetime.strptime(
@@ -564,13 +574,41 @@ class ABProjectReport(ActionBundle):
             for f in self.issue_jql:
                 log.debug("Processing JQL: " + f)
                 r = jira.search_issues(f, 0, False)
-                # Iterate Issues
+                # Iterate Issues in each JQL
                 for k in r:
                     # Get each issue from filter
                     issue = jira.issue(k)
+                    # log.debug("Working on issue: " + issue.key)
+
+                    # Iterate Workogs in each Issue
+                    for worklog in jira.worklogs(issue.key):
+                        # log.debug(issue.key + ": " + str(worklog.id))
+                        # pprint (vars(worklog))
+
+                        # Get datetime that the worklog is about
+                        _started = datetime.strptime(worklog.started[:10], "%Y-%m-%d")
+
+
+                        # Check entries against date limit from the command line
+                        if self.date_limit is not None and _started <= self.date_limit:
+                            log.debug(
+                                "Issue [" + str(issue.key) + "] Worklog [" + str(worklog.id) + "] with date " + str(
+                                    _started) + " will be counted because date limit is " + str(self.date_limit))
+                            _effort_actual_md = _effort_actual_md + worklog.timeSpentSeconds
+                        elif self.date_limit is not None and _started > self.date_limit:
+                            log.warn(
+                                "Issue [" + str(issue.key) + "] Worklog [" + str(worklog.id) + "] with date " + str(
+                                    _started) + " will NOT be counted because date limit is " + str(self.date_limit))
+                        elif self.date_limit is None:
+                            log.debug(
+                                "Issue [" + str(issue.key) + "] Worklog [" + str(worklog.id) + "] with date " + str(
+                                    _started) + " will be counted because date limit hasn't been provided")
+                            _effort_actual_md = _effort_actual_md + worklog.timeSpentSeconds
+
                     # Get issue's timespent in seconds and add it to the overall sum
-                    if issue.fields.timespent is not None:
-                        _effort_actual_md = _effort_actual_md + issue.fields.timespent
+                            # if issue.fields.timespent is not None:
+                            #     _effort_actual_md = _effort_actual_md + issue.fields.timespent
+
                 log.debug("Time spent so far is     : " + str(("%.2f" % ((_effort_actual_md / 3600) / 8))))
 
             # Switch timespent to md and round it off to 2 digits
