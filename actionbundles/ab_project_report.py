@@ -1,4 +1,5 @@
 import ast
+import sys
 from datetime import datetime, timedelta
 
 from util.toolkit import log, jira_authenticate, read_property_from_file, check_file_exists, die
@@ -31,12 +32,14 @@ class ABProjectReport(ActionBundle):
                        other_costs_actual,
                        pnl_baseline,
                        pnl_eac,
-                       in_budget):
+                       in_budget,
+                       execution_params):
         """
 
         :rtype : HTML
         """
         return '''
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,7 +63,6 @@ class ABProjectReport(ActionBundle):
 
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -85,10 +87,34 @@ class ABProjectReport(ActionBundle):
 
                 <!-- Page Heading -->
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-8">
                         <h1 class="page-header">
                            {0}
                         </h1>
+                    </div>
+                    <div class="col-lg-4">
+                            <button type="button" class="btn btn-outline btn-primary pull-right page-header"   data-toggle="modal" data-target="#myModal"><i class="fa fa-tasks fa-fw"></i> Execution Parameters</button>
+
+                             <!-- Modal -->
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel">Execution Parameters</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            {22}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
                     </div>
                 </div>
                 <!-- /.row -->
@@ -342,7 +368,7 @@ class ABProjectReport(ActionBundle):
 
                                 <div class="panel-heading panel-green">
                                     <span class="pull-left largeF">OnTime</span>
-                                    <span class="pull-right largeF">{6}</span>
+                                    <span class="pull-right largeF OnTime">{6}</span>
                                     <div class="clearfix"></div>
                                 </div>
 
@@ -353,7 +379,7 @@ class ABProjectReport(ActionBundle):
 
                                 <div class="panel-heading panel-green">
                                     <span class="pull-left largeF">inEffort</span>
-                                    <span class="pull-right largeF">{11} </span>
+                                    <span class="pull-right largeF inEffort">{11}</span>
                                     <div class="clearfix"></div>
                                 </div>
 
@@ -364,7 +390,7 @@ class ABProjectReport(ActionBundle):
 
                                 <div class="panel-heading panel-green">
                                     <span class="pull-left largeF">In Budget</span>
-                                    <span class="pull-right largeF">{21} </span>
+                                    <span class="pull-right largeF InBudget">{21}</span>
                                     <div class="clearfix"></div>
                                 </div>
                         </div>
@@ -461,10 +487,22 @@ class ABProjectReport(ActionBundle):
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
+    <script>
+    function colors(value,pos) {{
+        if (eval(value)>1) {{
+            eval(value)<=1.1 ? $( "."+pos ).parent("div").parent("div").removeClass("panel-green").addClass("panel-yellow") : $( "."+pos ).parent("div").parent("div").removeClass("panel-green").addClass("panel-red") ;
+        }}
+    }}
+    colors($( ".OnTime" ).text(),"OnTime");
+    colors($( ".inEffort" ).text(),"inEffort");
+    colors($( ".InBudget" ).text(),"InBudget");
+
+
+    </script>
+
 </body>
 
 </html>
-
 
 
 
@@ -489,7 +527,8 @@ class ABProjectReport(ActionBundle):
                str(other_costs_actual),
                str(pnl_baseline),
                str(pnl_eac),
-               str(in_budget))
+               str(in_budget),
+               str(execution_params))
 
     def __init__(self, parser):
         '''
@@ -730,7 +769,8 @@ class ABProjectReport(ActionBundle):
                                             str(self.other_costs_actual) + self.euro,
                                             str("%.2f" % _pnl_baseline) + "%",
                                             str("%.2f" % _pnl_eac) + "%",
-                                            str("%.2f" % _in_budget))
+                                            str("%.2f" % _in_budget),
+                                            str(" ".join(sys.argv)))
 
 
             # Output in either location
