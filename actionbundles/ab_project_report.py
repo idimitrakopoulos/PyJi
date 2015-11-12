@@ -1,5 +1,4 @@
 import ast
-import os
 from datetime import datetime, timedelta
 
 from util.toolkit import log, jira_authenticate, read_property_from_file, check_file_exists, die
@@ -539,17 +538,23 @@ class ABProjectReport(ActionBundle):
             self.go_live_actual = datetime.strptime(
                 read_property_from_file("go_live_actual", "project", self.input_file), self.date_format).date()
             self.issue_jql = list(ast.literal_eval(read_property_from_file("issue_jql", "project", self.input_file)))
-            self.output_location = read_property_from_file("output_location", "project", self.input_file)
-            # Add the date today in the filename
-            self.output_location_date = str(self.output_location).replace(os.path.basename(self.output_location),
-                                                                     datetime.today().strftime("%Y%m%d_")
-                                                                     + os.path.basename(self.output_location))
+            self.output_path = read_property_from_file("output_path", "project", self.input_file)
+            self.output_filename = read_property_from_file("output_filename", "project", self.input_file)
 
-            # Add "latest" in the filename
-            self.output_location_latest = str(self.output_location).replace(os.path.basename(self.output_location),
-                                                                            "latest_"
-                                                                            + os.path.basename(self.output_location))
+            # Add the date limit in the filename
+            if self.date_limit is not None:
+                self.output_location_datelimit = str(self.output_path
+                                                     + "latest_DL"
+                                                     + self.date_limit.strftime("%Y%m%d")
+                                                     + "_"
+                                                     + self.output_filename)
+            else:
+                # Add "latest" in the filename
+                self.output_location_latest = str(self.output_path
+                                                  + "latest_"
+                                                  + self.output_filename)
 
+            self.revenue_offer = read_property_from_file("revenue_offer", "project", self.input_file)
             self.md_rate_offer = read_property_from_file("md_rate_offer", "project", self.input_file)
             self.md_rate_internal = read_property_from_file("md_rate_internal", "project", self.input_file)
             self.other_costs_baseline = read_property_from_file("other_costs_baseline", "project", self.input_file)
@@ -664,8 +669,7 @@ class ABProjectReport(ActionBundle):
             #############################################
             # BUDGET
             #############################################
-            _revenue = float(self.md_rate_offer) * float(self.baseline_md)
-            log.info("Revenue                       : " + str(_revenue) + self.euro_sign_encoded)
+            log.info("Revenue                       : " + str(self.revenue_offer) + self.euro_sign_encoded)
             log.info("md Rate (Offer)               : " + str(self.md_rate_offer) + self.euro_sign_encoded)
             log.info("md Rate (Internal)            : " + str(self.md_rate_internal) + self.euro_sign_encoded)
 
@@ -677,11 +681,12 @@ class ABProjectReport(ActionBundle):
             log.info("Other Costs (Baseline)        : " + str(self.other_costs_baseline) + self.euro_sign_encoded)
             log.info("Other Costs (Actual)          : " + str(self.other_costs_actual) + self.euro_sign_encoded)
 
-            _pnl_baseline = ((float(_revenue) - float(_md_cost_baseline) - float(
-                self.other_costs_baseline)) / _revenue) * 100
+            _pnl_baseline = ((float(self.revenue_offer) - float(_md_cost_baseline) - float(
+                self.other_costs_baseline)) / float(self.revenue_offer)) * 100
             log.info("PnL (Baseline)                : " + str("%.2f" % _pnl_baseline) + "%")
 
-            _pnl_eac = ((float(_revenue) - float(_md_cost_eac) - float(self.other_costs_actual)) / _revenue) * 100
+            _pnl_eac = ((float(self.revenue_offer) - float(_md_cost_eac) - float(self.other_costs_actual)) / float(
+                self.revenue_offer)) * 100
             log.info("PnL (At Completion)           : " + str("%.2f" % _pnl_eac) + "%")
 
 
@@ -710,7 +715,7 @@ class ABProjectReport(ActionBundle):
                                             _effort_remaining_md,
                                             _effort_at_completion_md,
                                             "%.2f" % _in_effort,
-                                            str(_revenue) + self.euro,
+                                            str(self.revenue_offer) + self.euro,
                                             str(self.md_rate_offer) + self.euro,
                                             str(self.md_rate_internal) + self.euro,
                                             str(_md_cost_baseline) + self.euro,
@@ -721,13 +726,16 @@ class ABProjectReport(ActionBundle):
                                             str("%.2f" % _pnl_eac) + "%",
                                             str("%.2f" % _in_budget))
 
-            with open(self.output_location_date, "w") as text_file:
-                text_file.write(html_code)
-                log.debug("Output added to " + self.output_location_date)
 
-            with open(self.output_location_latest, "w") as text_file:
-                text_file.write(html_code)
-                log.debug("Output added to " + self.output_location_latest)
+            # Output in either location
+            if self.date_limit is not None:
+                with open(self.output_location_datelimit, "w") as text_file:
+                    text_file.write(html_code)
+                    log.debug("Output added to " + self.output_location_datelimit)
+            else:
+                with open(self.output_location_latest, "w") as text_file:
+                    text_file.write(html_code)
+                    log.debug("Output added to " + self.output_location_latest)
 
         except:
             raise
