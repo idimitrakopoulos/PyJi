@@ -575,6 +575,7 @@ class ABProjectReport(ActionBundle):
             #############################################
             # TIME SPENT
             #############################################
+            _effort_spent_in_future_sec = 0.0
             # Iterate JQL Filters
             for f in self.issue_jql:
                 log.debug("Processing JQL: " + f)
@@ -603,7 +604,9 @@ class ABProjectReport(ActionBundle):
                         elif self.date_limit is not None and _started > self.date_limit:
                             log.warn(
                                 "Issue [" + str(issue.key) + "] Worklog [" + str(worklog.id) + "] with date " + str(
-                                    _started) + " will NOT be counted because date limit is " + str(self.date_limit))
+                                    _started) + " will be added to EFFORT REMAINING because date limit is " + str(
+                                    self.date_limit))
+                            _effort_spent_in_future_sec = _effort_spent_in_future_sec + worklog.timeSpentSeconds
                         elif self.date_limit is None:
                             log.debug(
                                 "Issue [" + str(issue.key) + "] Worklog [" + str(worklog.id) + "] with date " + str(
@@ -624,17 +627,20 @@ class ABProjectReport(ActionBundle):
             #############################################
             # ESTIMATE TO COMPLETE
             #############################################
-            _effort_remaining_md = 0.0
+            _effort_remaining_md = 0.0 + ((_effort_spent_in_future_sec / 3600) / 8)
             if float(_effort_actual_md) > float(self.baseline_md) and self.estimate_to_complete is None:
                 die("Time spent " + str(
                     _effort_actual_md) + " md is higher than the baseline " + self.baseline_md + " md so an estimate to complete calculation cannot take place, please use -e switch to provide a manual E.t.C.")
             elif self.estimate_to_complete is None:
-                _effort_remaining_md = float(self.baseline_md) - float(_effort_actual_md)
+                _effort_remaining_md = _effort_remaining_md + (float(self.baseline_md) - float(_effort_actual_md))
             else:
-                _effort_remaining_md = self.estimate_to_complete
+                _effort_remaining_md = _effort_remaining_md + float(self.estimate_to_complete)
 
-            log.info("Effort (Remaining)            : " + str(_effort_remaining_md) + " md")
+            log.info("Effort (Remaining)            : " + str("%.2f" % _effort_remaining_md) + " md")
 
+            if _effort_spent_in_future_sec > 0.0:
+                log.warn("(Effort remaining contains time spent in the future: " + "%.2f" % (
+                (_effort_spent_in_future_sec / 3600) / 8) + " md)")
 
             #############################################
             # EFFORT AT COMPLETION
@@ -736,6 +742,7 @@ class ABProjectReport(ActionBundle):
                 with open(self.output_location_latest, "w") as text_file:
                     text_file.write(html_code)
                     log.debug("Output added to " + self.output_location_latest)
+
 
         except:
             raise
