@@ -1,30 +1,30 @@
 [project]
 # PROJECT NAME
-project_name=VF GR 3.3.x
+project_name= Piraeus Bank Greece Climabiz CRs - 1.5 (November 2015)
 date_format=%d/%m/%Y
 
 # BASELINE
-baseline_md=45.5
+baseline_md=5
 
 # KICK OFF
-kick_off_date=2/11/2015
+kick_off_date=27/11/2015
 
 # UAT
-uat_start_baseline=13/11/2015
-uat_start_actual=13/11/2015
+uat_start_baseline=8/12/2015
+uat_start_actual=8/12/2015
 
 # LIVE
-go_live_baseline=30/11/2015
-go_live_actual=30/11/2015
+go_live_baseline=10/12/2015
+go_live_actual=10/12/2015
 
 # ISSUE FILTERS
-issue_jql=('project = vfgrma AND fixVersion = 3.3.x AND timespent > 0',)
+issue_jql=('project = PBCLIMA AND fixVersion="1.5 (CRs November 2015)"  AND timespent > 0',)
 
 # REVENUE
-revenue_offer=30600
+revenue_offer= 2000
 
 # RATES
-md_rate_offer=360
+md_rate_offer= 400
 md_rate_internal=414
 
 # COSTS

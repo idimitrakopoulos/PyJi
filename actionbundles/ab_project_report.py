@@ -666,14 +666,16 @@ class ABProjectReport(ActionBundle):
             #############################################
             # ESTIMATE TO COMPLETE
             #############################################
-            _effort_remaining_md = 0.0 + ((_effort_spent_in_future_sec / 3600) / 8)
+
+
+            _effort_remaining_md = 0.0  #
             if float(_effort_actual_md) > float(self.baseline_md) and self.estimate_to_complete is None:
                 die("Time spent " + str(
                     _effort_actual_md) + " md is higher than the baseline " + self.baseline_md + " md so an estimate to complete calculation cannot take place, please use -e switch to provide a manual E.t.C.")
             elif self.estimate_to_complete is None:
                 _effort_remaining_md = _effort_remaining_md + (float(self.baseline_md) - float(_effort_actual_md))
             else:
-                _effort_remaining_md = _effort_remaining_md + float(self.estimate_to_complete)
+                _effort_remaining_md = ((_effort_spent_in_future_sec / 3600) / 8) + float(self.estimate_to_complete)
 
             log.info("Effort (Remaining)            : " + str("%.2f" % _effort_remaining_md) + " md")
 
