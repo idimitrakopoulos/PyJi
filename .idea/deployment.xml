@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="paragonium" createEmptyFolders="true" uploadOnCheckin="fcc23cac-42c2-472b-ac7f-66389226a6f0">
+  <component name="PublishConfigData" autoUpload="Always" serverName="jenkins3" createEmptyFolders="true" uploadOnCheckin="fcc23cac-42c2-472b-ac7f-66389226a6f0">
     <serverData>
-      <paths name="paragonium">
+      <paths name="jenkins3">
         <serverdata>
           <mappings>
-            <mapping deploy="/dev/PyJi/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/test/PyJi" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

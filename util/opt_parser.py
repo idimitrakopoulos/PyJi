@@ -75,6 +75,8 @@ if (action):
                                   help="Compatibility mode (ignore existing Python version)")
     commonOptionsGroup.add_option("-S", "--silent", action="store_true", dest="silent", default=False,
                                   help="Silent mode (don't send any email notifications)")
+    commonOptionsGroup.add_option("-D", "--disableProgress", action="store_true", dest="disableProgress", default=False,
+                                  help="Disable progress indicator mode (better for logging)")
 
     commonOptionsGroup.add_option("-i", "--identifier", dest="identifier", help="A unique identifier",
                                   metavar="<IDENTIFIER>")
@@ -122,6 +124,10 @@ if (action in valid_actions or (action).startswith("_")):
         parser.add_option("-t", "--type", dest="type", help="The jira issue type (mandatory)", metavar="<TYPE>")
         parser.add_option("-A", "--assignee", dest="assignee", help="The jira issue assignee (mandatory)",
                           metavar="<ASSIGNEE>")
+        parser.add_option("-l", "--remotelinks", dest="remotelinks", help="The issues that remotely link to the new jira issue (applinks needs to be on in JIRA). Expected format: key,key,key...key",
+                          metavar="<REMOTELINKS>")
+        parser.add_option("-L", "--simplelinks", dest="simplelinks", help="The issues that simply link to the new jira issue. Expected format: key|value,key|value...key|value",
+                          metavar="<SIMPLELINKS>")
 
         mandatory_options.append('key')
         mandatory_options.append('summary')

@@ -10,7 +10,8 @@ bi = None
 try:
 
     # Begin the Busy indicator
-    bi = start_busy_indicator("")
+    if not parser.options.disableProgress:
+        bi = start_busy_indicator("")
 
     # Print execution command
     log.debug("Executed command '" + " ".join(sys.argv) + "'")
@@ -29,7 +30,8 @@ except (Exception, KeyboardInterrupt):
 
 finally:
     # End the busy indicator
-    stop_busy_indicator(bi)
+    if not parser.options.disableProgress:
+        stop_busy_indicator(bi)
 
     # Salute!
     log.info("Bye bye! :-)")
