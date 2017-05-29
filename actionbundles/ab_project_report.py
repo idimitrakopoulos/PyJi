@@ -661,7 +661,7 @@ class ABProjectReport(ActionBundle):
             # Switch timespent to md and round it off to 2 digits
             _effort_actual_md = "%.2f" % ((_effort_actual_md / 3600) / 8)
 
-            log.info("Effort (Actual)               : " + str("%.2f" % _effort_actual_md) + " md")
+            log.info("Effort (Actual)               : " + str("%.2f" % float(_effort_actual_md)) + " md")
 
             #############################################
             # ESTIMATE TO COMPLETE
@@ -678,7 +678,7 @@ class ABProjectReport(ActionBundle):
                 # _effort_remaining_md = ((_effort_spent_in_future_sec / 3600) / 8) + float(self.estimate_to_complete)
                 _effort_remaining_md = float(self.estimate_to_complete)
 
-            log.info("Effort (Remaining)            : " + str("%.2f" % _effort_remaining_md) + " md")
+            log.info("Effort (Remaining)            : " + str("%.2f" % float(_effort_remaining_md)) + " md")
 
             if _effort_spent_in_future_sec > 0.0:
                 log.warn("(Effort remaining doesn't contain time spent in the future: " + "%.2f" % (
@@ -691,7 +691,7 @@ class ABProjectReport(ActionBundle):
             # Calculate Estimate At Completion
             _effort_at_completion_md = float(_effort_actual_md) + float(_effort_remaining_md)
 
-            log.info("Effort (At Completion)        : " + str("%.2f" % _effort_at_completion_md) + " md")
+            log.info("Effort (At Completion)        : " + str("%.2f" % float(_effort_at_completion_md)) + " md")
 
             #############################################
             # ON TIME
