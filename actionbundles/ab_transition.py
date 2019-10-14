@@ -19,7 +19,7 @@ class ABTransition(ActionBundle):
             k = parser.options.key
             s = parser.options.status
 
-            jira = jira_authenticate(parser.options.jiraURL, parser.options.jiraUsername, parser.options.jiraPassword)
+            jira = jira_authenticate(parser.options.jira_url, parser.options.jira_username, parser.options.jira_password)
 
             # Get an issue.
             issue = jira.issue(k)

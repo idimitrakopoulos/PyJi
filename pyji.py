@@ -18,7 +18,7 @@ try:
 
     # Generate a unique execution id
     guid = generate_guid()
-    log.info("Unique PyJi execution ID generated: '" + guid + "'")
+    log.debug("Unique PyJi execution ID generated: '" + guid + "'")
 
     # Instantiate specified ActionBundle class (from string)
     ab = ab_path_to_class(ab_subclass_path_from_action(parser.action), parser)

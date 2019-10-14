@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/PyJi.iml" filepath="$PROJECT_DIR$/.idea/PyJi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/pyji.iml" filepath="$PROJECT_DIR$/.idea/pyji.iml" />
     </modules>
   </component>
 </project>

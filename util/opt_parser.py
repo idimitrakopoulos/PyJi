@@ -4,9 +4,9 @@ import getpass
 
 from util.toolkit import check_file_exists, properties, log, logging
 
-valid_actions = ['comment', 'transition', 'autotransition', 'createissue', 'projectrpt']
+valid_actions = ['release_kpi', 'release_kpi_workflow30', 'epic_kpi', 'epic_kpi_workflow30', 'release_process','issue_kpi', 'transition', 'test']
 action = None
-mandatory_options = ['action', 'jiraURL', 'jiraUsername', 'jiraPassword']
+mandatory_options = ['action', 'jira_url', 'jira_username', 'jira_password']
 file_options = []
 
 
@@ -53,15 +53,15 @@ if (action):
 
     # Jira Options
     jiraOptionsGroup = OptionGroup(parser, "JIRA Options", "(JIRA location and credentials)")
-    jiraOptionsGroup.add_option("-U", "--jiraURL", dest="jiraURL",
+    jiraOptionsGroup.add_option("-U", "--jira_url", dest="jira_url",
                                 help="The JIRA URL you are connecting to (e.g. https://jira.atlassian.net)",
-                                metavar="<JIRAURL>")
-    jiraOptionsGroup.add_option("-u", "--jiraUsername", dest="jiraUsername",
+                                metavar="<JIRA_URL>")
+    jiraOptionsGroup.add_option("-u", "--jira_username", dest="jira_username",
                                 help="The JIRA Username you are using to connect",
-                                metavar="<JIRAUSERNAME>")
-    jiraOptionsGroup.add_option("-p", "--jiraPassword", dest="jiraPassword",
+                                metavar="<JIRA_USERNAME>")
+    jiraOptionsGroup.add_option("-p", "--jira_password", dest="jira_password",
                                 help="The JIRA Password you are using to connect",
-                                metavar="<JIRAPASSWORD>")
+                                metavar="<JIRA_PASSWORD>")
     jiraOptionsGroup.add_option("-P", "--promptForJiraPassword", action="store_const", const=1,
                                 dest="promptForJiraPassword",
                                 help="Prompt for JIRA password instead of specifying in the command line")
@@ -84,8 +84,7 @@ if (action):
     parser.add_option_group(commonOptionsGroup)
 
     # Logging Options
-    loggingOptionsGroup = OptionGroup(parser, "Logging Options",
-                                      "(Regulate the logging of PyJi. Default loglevel: INFO)")
+    loggingOptionsGroup = OptionGroup(parser, "Logging Options","(Regulate the logging of PyJi)")
     loggingOptionsGroup.add_option("-v", "--verbose",        action="store_const",       const=1, dest="verbose",        help="Verbose mode (loglevel: DEBUG)")
     loggingOptionsGroup.add_option("-V", "--vverbose",       action="store_const",       const=2, dest="verbose",        help="Very verbose mode (loglevel: DEBUG+)")
     parser.add_option_group(loggingOptionsGroup)
@@ -94,13 +93,39 @@ if (action):
 if (action in valid_actions or (action).startswith("_")):
     log.info("Action that was requested to execute '" + action + "'")
 
-    if (action in 'comment'):
-        parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
-        parser.add_option("-c", "--comment", dest="comment", help="The comment you want to add (mandatory)",
-                          metavar="<COMMENT>")
-        mandatory_options.append('key')
-        mandatory_options.append('comment')
+    if (action in 'release_kpi'):
+        parser.add_option("-n", "--project_name", dest="project_name", help="The jira project name (mandatory)", metavar="<PROJECT_NAME>")
+        parser.add_option("-r", "--release", dest="release", help="The new release number (mandatory)", metavar="<RELEASE>")
 
+        mandatory_options.append('project_name')
+        mandatory_options.append('release')
+
+    elif (action in 'release_kpi_workflow30'):
+        parser.add_option("-n", "--project_name", dest="project_name", help="The jira project name (mandatory)", metavar="<PROJECT_NAME>")
+        parser.add_option("-r", "--release", dest="release", help="The new release number (mandatory)", metavar="<RELEASE>")
+
+        mandatory_options.append('project_name')
+        mandatory_options.append('release')
+
+    elif (action in 'release_process_kpi'):
+        parser.add_option("-r", "--release_key", dest="release_key", help="The release ticket key (mandatory)", metavar="<RELEASE_KEY>")
+
+        mandatory_options.append('release_key')
+
+    elif (action in 'epic_kpi'):
+        parser.add_option("-e", "--epic_key", dest="epic_key", help="The epic key (mandatory)", metavar="<EPIC_KEY>")
+
+        mandatory_options.append('epic_key')
+
+    elif (action in 'epic_kpi_workflow30'):
+        parser.add_option("-e", "--epic_key", dest="epic_key", help="The epic key (mandatory)", metavar="<EPIC_KEY>")
+
+        mandatory_options.append('epic_key')
+
+    elif (action in 'issue_kpi'):
+        parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
+
+        mandatory_options.append('key')
 
     elif (action in 'transition'):
         parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
@@ -110,46 +135,9 @@ if (action in valid_actions or (action).startswith("_")):
         mandatory_options.append('key')
         mandatory_options.append('status')
 
-    elif (action in 'autotransition'):
-        parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
+    elif (action in 'test'):
+        parser.add_option("-s", "--string", dest="string", help="The jira issue key (mandatory)", metavar="<STRING>")
 
-        mandatory_options.append('key')
-
-    elif (action in 'createissue'):
-        parser.add_option("-k", "--key", dest="key", help="The jira issue key (mandatory)", metavar="<KEY>")
-        parser.add_option("-s", "--summary", dest="summary", help="The jira ticket summary (mandatory)",
-                          metavar="<SUMMARY>")
-        parser.add_option("-d", "--description", dest="description", help="The jira issue description (mandatory)",
-                          metavar="<DESCRIPTION>")
-        parser.add_option("-t", "--type", dest="type", help="The jira issue type (mandatory)", metavar="<TYPE>")
-        parser.add_option("-A", "--assignee", dest="assignee", help="The jira issue assignee (mandatory)",
-                          metavar="<ASSIGNEE>")
-        parser.add_option("-l", "--remotelinks", dest="remotelinks", help="The issues that remotely link to the new jira issue (applinks needs to be on in JIRA). Expected format: key,key,key...key",
-                          metavar="<REMOTELINKS>")
-        parser.add_option("-L", "--simplelinks", dest="simplelinks", help="The issues that simply link to the new jira issue. Expected format: key|value,key|value...key|value",
-                          metavar="<SIMPLELINKS>")
-
-        mandatory_options.append('key')
-        mandatory_options.append('summary')
-        mandatory_options.append('description')
-        mandatory_options.append('type')
-        mandatory_options.append('assignee')
-
-    elif (action in 'projectrpt'):
-
-        parser.add_option("-f", "--inputfile", dest="input_file", help="The project property file (mandatory)",
-                          metavar="<IFILE>")
-
-        parser.add_option("-e", "--estimatetocomplete", dest="estimate_to_complete",
-                          help="The estimate to complete in md, if not provided then one will be calculated",
-                          metavar="<ETC>")
-
-        parser.add_option("-d", "--datelimit", dest="date_limit", default=None,
-                          help="Count worklogs that were created until this day (included!) Format should be 'dd/mm/YYYY'.",
-                          metavar="<DLIMIT>")
-
-
-        mandatory_options.append('input_file')
 
 else:
     log.critical("Action '" + action + "' is allowed but there is no implementation for it at this point :-(")
@@ -160,8 +148,8 @@ else:
 
 # If Jira passsword prompt is requested, then prompt
 if options.promptForJiraPassword:
-    log.info("Enter your JIRA password for " + options.jiraUsername + "@" + options.jiraURL + ": ")
-    options.jiraPassword = getpass.getpass("> ")
+    log.info("Enter your JIRA password for " + options.jira_username + "@" + options.jira_url + ": ")
+    options.jira_password = getpass.getpass("> ")
 
 # Make sure all mandatory options are provided
 for m in mandatory_options:

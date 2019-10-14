@@ -6,9 +6,10 @@ import getpass
 import time
 import socket
 import random
-import logging
+import datetime
 import logging.config
 from ConfigParser import RawConfigParser
+from collections import Counter
 
 from jira import JIRA
 
@@ -146,11 +147,14 @@ def ab_path_to_class(path, p):
 
 def ab_subclass_path_from_action(s):
     switcher = {
-        'comment': "actionbundles.ab_comment.ABComment",
+        'release_kpi': "actionbundles.ab_release_kpi.ABReleaseKpi",
+        'release_kpi_workflow30': "actionbundles.ab_release_kpi_workflow30.ABReleaseKpiWorkflow30",
+        'release_process_kpi': "actionbundles.ab_release_process_kpi.ABReleaseProcessKpi",
+        'epic_kpi_workflow30': "actionbundles.ab_epic_kpi_workflow30.ABEpicKpiWorkflow30",
+        'epic_kpi': "actionbundles.ab_epic_kpi.ABEpicKpi",
+        'issue_kpi': "actionbundles.ab_issue_kpi.ABIssueKpi",
         'transition': "actionbundles.ab_transition.ABTransition",
-        'autotransition': "actionbundles.ab_auto_transition.ABAutoTransition",
-        'createissue': "actionbundles.ab_create_issue.ABCreateIssue",
-        'projectrpt': "actionbundles.ab_project_report.ABProjectReport",
+        'test': "actionbundles.ab_test.ABTest",
     }
     ab_path = switcher.get(s, "n/a")
     log.debug("Action '" + s + "' maps to AB class '" + ab_path + "'")
@@ -159,15 +163,21 @@ def ab_subclass_path_from_action(s):
 
 def jira_authenticate(url, u, p):
     try:
-        log.info("Attempting to authenticate to '" + url + "' (username: '" + u + "' password: '" + p + "')")
+        log.debug("Attempting to authenticate to '" + url + "' (username: '" + u + "' password: ----)")
         j = JIRA(url, basic_auth=(u, p))
-        log.info("Successful authentication!")
+        log.debug("Successful authentication!")
     except:
         log.error(
-            "Error when trying to authenticate to '" + url + "' (username: '" + u + "'" + "' password: '" + p + "')")
+            "Error when trying to authenticate to '" + url + "' (username: '" + u + "'" + "' password: ----)")
         raise
     return j
 
+def merge_dicts_adding_values(dict_a, dict_b):
+    A = Counter(dict_a)
+    B = Counter(dict_b)
+    result = A + B
+
+    return result
 
 def get_string_from_list(lst, n, s):
     r = False
@@ -187,6 +197,52 @@ def start_busy_indicator(msg):
 
 def stop_busy_indicator(busyIndicator):
     busyIndicator.stop()
+
+
+def calc_working_seconds(from_date, to_date):
+    result = 0
+
+    # log.debug("From date: {}".format(from_date))
+    # log.debug("To date: {}".format(to_date))
+    # log.debug("Total Delta: {}".format(str(to_date - from_date)))
+
+    # Workday
+    workday_start_time = datetime.datetime.strptime("09:00:00", "%H:%M:%S").time()
+    workday_stop_time  = datetime.datetime.strptime("17:30:00", "%H:%M:%S").time()
+
+    if from_date.date() == to_date.date():
+        # log.debug("From/To times occured on same day")
+        result = (to_date - from_date).total_seconds()
+    elif from_date.date() < to_date.date():
+        # log.debug("From/To times occured on different days")
+
+        # Get seconds until current EOD
+        result = (datetime.timedelta(hours=workday_stop_time.hour,
+                                     minutes=workday_stop_time.minute,
+                                     seconds=workday_stop_time.second) -
+                  datetime.timedelta(hours=from_date.time().hour,
+                                     minutes=from_date.time().minute,
+                                     seconds=from_date.time().second)).total_seconds()
+
+        # Next day morning
+        next_day = (from_date + datetime.timedelta(days=1)).replace(hour=workday_start_time.hour,
+                                                                    minute=workday_start_time.minute,
+                                                                    second=workday_start_time.second)
+
+        while True:
+            # log.debug("Next day {}".format(next_day))
+            if next_day.date() == to_date.date():
+                result += (to_date - next_day).total_seconds()
+                break
+            elif next_day.date() < to_date.date() and next_day.weekday() < 6:
+                result += (next_day.replace(hour=workday_stop_time.hour,
+                                            minute=workday_stop_time.minute,
+                                            second=workday_stop_time.second) - next_day).total_seconds()
+
+            next_day += datetime.timedelta(days=1)
+
+
+    return result
 
 
 class PropertyReader(object):
